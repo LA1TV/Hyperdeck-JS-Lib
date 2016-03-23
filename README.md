@@ -37,3 +37,6 @@ hyperdeck.getNotifier().on("asynchronousEvent", function(response) {
   console.log("Got an asynchronous event with code "+response.code+".");
 });
 ```
+
+# API Documentation
+The hyperdeck API documentation can be found at "https://www.blackmagicdesign.com/uk/manuals/HyperDeck/HyperDeck_Manual.pdf".

@@ -140,6 +140,9 @@ function getNetStub() {
           if (evt === "close") {
             onCloseListeners.push(listener);
           }
+          else if (evt === "error") {
+            
+          }
           else {
             throw new Error("Not supported in mock net.");
           }

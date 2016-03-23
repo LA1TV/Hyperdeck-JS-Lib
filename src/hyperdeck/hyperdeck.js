@@ -180,7 +180,7 @@ function Hyperdeck(ip) {
     // wait for the hyperdeck to confirm it's ready and connected.
     handleConnectionResponse();
   });
-  client.on("error", function(e) {
+  client.on("error", function(/*e*/) {
     //console.warn("Socket error.", e);
   });
   // when the connection closes handle this

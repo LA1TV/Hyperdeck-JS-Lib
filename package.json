@@ -1,0 +1,34 @@
+{
+  "name": "Hyperdeck-JS-Lib",
+  "version": "0.0.1",
+  "description": "A javascript library for communication with the Blackmagic Hyperdeck.",
+  "main": "src/index.js",
+  "dependencies": {
+    "net": "^1.0.2",
+    "promise": "^7.1.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-jshint": "^2.0.0",
+    "gulp-mocha": "^2.2.0",
+    "jshint": "^2.9.1",
+    "jshint-stylish": "^2.1.0",
+    "mocha": "^2.4.5",
+    "proxyquire": "^1.7.4",
+    "should": "^8.2.2",
+    "sinon": "^1.17.3"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LA1TV/Hyperdeck-JS-Lib.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LA1TV/Hyperdeck-JS-Lib/issues"
+  },
+  "homepage": "https://github.com/LA1TV/Hyperdeck-JS-Lib#readme"
+}

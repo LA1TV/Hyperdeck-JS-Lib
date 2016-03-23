@@ -66,8 +66,8 @@ function Hyperdeck(ip) {
 
   // or the connection fails to be made
   function onConnectionLost() {
-    if (!socketConnected) {
-      throw "Must be connected in order to loose the connection!";
+    if (!socketConnected && !connecting) {
+      throw "Must be connected (or connecting) in order to loose the connection!";
     }
     connecting = false;
     connected = false;
@@ -180,8 +180,11 @@ function Hyperdeck(ip) {
     // wait for the hyperdeck to confirm it's ready and connected.
     handleConnectionResponse();
   });
+  client.on("error", function(e) {
+    //console.warn("Socket error.", e);
+  });
   // when the connection closes handle this
-  // this should also happen if the connectionf fails
+  // this should also happen if the connection fails at some point
   client.on("close", onConnectionLost);
   var responseHandler = new ResponseHandler(client);
 
@@ -197,7 +200,6 @@ function Hyperdeck(ip) {
    *         (or connection lost).
    */
   this.makeRequest = function(requestToProcess) {
-
       var completionPromise = new Promise(function(resolve, reject) {
           requestCompletionPromises.push({
               resolve: resolve,
@@ -254,6 +256,9 @@ function Hyperdeck(ip) {
      return publicNotifier;
   };
 
+  /**
+   * Destroy the hyperdeck instance, and disconnect if connected.
+   */
   this.destroy = function() {
     if (destroyed) {
       return;

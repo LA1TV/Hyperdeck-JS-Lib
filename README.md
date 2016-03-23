@@ -23,12 +23,12 @@ var HyperdeckLib = require("hyperdeck-js-lib");
 var hyperdeck = new HyperdeckLib.Hyperdeck("192.168.1.12");
 hyperdeck.onConnected().then(function() {
 	// connected to hyperdeck
-	// Note: you do not have to wait for tne connection before you start making requests.
+	// Note: you do not have to wait for the connection before you start making requests.
 	// Requests are buffered until the connection completes. If the connection fails, any
 	// buffered requests will be rejected.
 	hyperdeck.makeRequest("device info").then(function(response) {
 	  console.log("Got response with code "+response.code+".");
-	  console.log("Hyperdeck unique id: "+response.data["unique id"]);
+	  console.log("Hyperdeck unique id: "+response.params["unique id"]);
 	}).catch(function(errResponse) {
 	  if (!errResponse) {
 	    console.error("The request failed because the hyperdeck connection was lost.");

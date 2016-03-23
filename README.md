@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/LA1TV/Hyperdeck-JS-Lib.svg?branch=master)](https://travis-ci.org/LA1TV/Hyperdeck-JS-Lib)
+
 Hyperdeck-JS-Lib
 ----------------
 A javascript library for communication with the Blackmagic Hyperdeck.

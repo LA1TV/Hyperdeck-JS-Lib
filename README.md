@@ -1,8 +1,12 @@
 [![Build Status](https://travis-ci.org/LA1TV/Hyperdeck-JS-Lib.svg?branch=master)](https://travis-ci.org/LA1TV/Hyperdeck-JS-Lib)
+[![npm version](https://badge.fury.io/js/hyperdeck-js-lib.svg)](https://badge.fury.io/js/hyperdeck-js-lib)
 
 Hyperdeck-JS-Lib
 ----------------
 A javascript library for communication with the Blackmagic Hyperdeck.
+
+# Installing
+`npm install --save hyperdeck-js-lib`
 
 # Using The Library
 The `makeRequest()` function returns a promise which will resolve with the response from the hyperdeck if it is a succcesful response. Otherwise it will reject. If the connection was lost the response object will be `null` otherwise it will be the error response from the hyperdeck.

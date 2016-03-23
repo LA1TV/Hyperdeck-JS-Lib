@@ -101,21 +101,28 @@ describe('Hyperdeck', function() {
 });
 
 function getNetStub() {
-  function SocketMock() {}
-  SocketMock.prototype.connect = function(opts, onSuccess) {
-    // async
-    setTimeout(function() {
-      onSuccess();
-    }, 0);
-  };
-  SocketMock.prototype.write = function(data) {
-    if (onSocketWrite) {
-      onSocketWrite(data);
-    }
-  };
-
   var netStub = {
-    Socket: SocketMock
+    connect: function(opts, onSuccess) {
+      // async
+      setTimeout(function() {
+        onSuccess();
+      }, 0);
+      return {
+        write: function(data) {
+          if (onSocketWrite) {
+            onSocketWrite(data);
+          }
+        },
+        on: function(evt, listener) {
+          if (evt === "close") {
+            
+          }
+          else {
+            throw new Error("Not supported in mock net.");
+          }
+        }
+      }
+    }
   };
   return netStub;
 }

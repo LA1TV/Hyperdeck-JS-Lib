@@ -4,6 +4,7 @@ var Promise = require('promise');
 var net = require('net');
 var events = require('events');
 
+var publicNotifier = new events.EventEmitter();
 var notifier = new events.EventEmitter();
 
 var pendingRequests = [];
@@ -18,8 +19,6 @@ var requestInProgress = false;
  * @param ip, The IP address of the hyperdeck.
  **/
 function Hyperdeck(ip) {
-
-  var client = new net.Socket();
   var responseHandler = new ResponseHandler(client);
   var connecting = true;
   var connected = false;
@@ -32,33 +31,42 @@ function Hyperdeck(ip) {
   responseHandler.getNotifier().on("asynchronousResponse", function(data) {
     // the developer will listen on the notifier for asynchronous events
     // fired from the hyperdeck
-    notifier.emit("asynchronousEvent", data);
+    publicNotifier.emit("asynchronousEvent", data);
   });
 
-  client.connect({
+  responseHandler.getNotifier().on("connectionStateChange", function(state) {
+    if (!state.connected) {
+      publicNotifier.emit("connectionLost");
+    }
+  });
+
+  var client = net.connect({
     host: ip,
     port: 9993
   }, function() {
     console.log('Connected.');
     connected = true;
     connecting = false;
+    notifier.emit("connectionStateChange", {connected: true});
     // a request might have been queued whilst the connection
     // was being made
     performNextRequest();
   });
 
-    // TODO call this if the connection is lost
-    // or the connection fails to be made
-    /*function onConnectionLost() {
-        if (!connected) {
-            throw "Must be connected in order to loose the connection!";
-        }
+  // when the connection closes handle this
+  // this should also happen if the connectionf fails
+  client.on("close", onConnectionLost);
 
-        connecting = false;
-        connected = false;
-        notifier.emit("connectionLost");
-        performNextRequest();
-    }*/
+  // or the connection fails to be made
+  function onConnectionLost() {
+    if (!connected) {
+        throw "Must be connected in order to loose the connection!";
+    }
+    connecting = false;
+    connected = false;
+    notifier.emit("connectionStateChange", {connected: false});
+    performNextRequest();
+  }
 
   /**
    * Checks the chain isn't empty or that the request is in progress.
@@ -86,13 +94,13 @@ function Hyperdeck(ip) {
     function registerListeners() {
       listenersRegistered = true;
       responseHandler.getNotifier().on("synchronousResponse", handleResponse);
-      notifier.on("connectionLost", handleConnectionLoss);
+      notifier.on("connectionStateChange", handleConnectionLoss);
     }
 
     function removeListeners() {
       if (listenersRegistered) {
         responseHandler.getNotifier().removeListener("synchronousResponse", handleResponse);
-        notifier.removeListener("connectionLost", handleConnectionLoss);
+        notifier.removeListener("connectionStateChange", handleConnectionLoss);
       }
     }
 
@@ -110,7 +118,11 @@ function Hyperdeck(ip) {
       onRequestCompleted();
     }
 
-    function handleConnectionLoss() {
+    function handleConnectionLoss(state) {
+      if (state.connected) {
+        throw new Error("Invalid connection state.");
+      }
+
       console.log("Connection lost. Rejecting provided promise to signify failure.");
       removeListeners();
       // null to signify connection loss
@@ -134,48 +146,74 @@ function Hyperdeck(ip) {
     }
   }
 
-    /**
-    * Make a request to the hyperdeck.
-    * - If the hyperdeck returns a success response the promise will be resolved
-    *   with the payload.
-    * - If the hyperdeck returns a failure response the promise will be rejected
-    *   with the payload.
-    * - If the hyperdeck looses connection or is not connected the promise will be
-    *   rejected and the payload will be `null`.
-    * @return The promise which will resolve/reject when a response has been received
-    *         (or connection lost).
-    **/
-    this.makeRequest = function(requestToProcess) {
+  /**
+   * Make a request to the hyperdeck.
+   * - If the hyperdeck returns a success response the promise will be resolved
+   *   with the payload.
+   * - If the hyperdeck returns a failure response the promise will be rejected
+   *   with the payload.
+   * - If the hyperdeck looses connection or is not connected the promise will be
+   *   rejected and the payload will be `null`.
+   * @return The promise which will resolve/reject when a response has been received
+   *         (or connection lost).
+   */
+  this.makeRequest = function(requestToProcess) {
 
-        var completionPromise = new Promise(function(resolve, reject) {
-            requestCompletionPromises.push({
-                resolve: resolve,
-                reject: reject
-            });
+      var completionPromise = new Promise(function(resolve, reject) {
+          requestCompletionPromises.push({
+              resolve: resolve,
+              reject: reject
+          });
+      });
+
+      pendingRequests.push(requestToProcess);
+      console.log("Queueing request: "+requestToProcess);
+      performNextRequest();
+      return completionPromise;
+  };
+
+  /**
+   * Returns a promise that resolves when they hyperdeck is connected,
+   * or rejected if the connection fails.
+   */
+  this.onConnected = function() {
+    return new Promise(function(resolve, reject) {
+      if (connected) {
+        resolve();
+      }
+      else if (!connecting) {
+        reject();
+      }
+      else {
+        notifier.once("connectionStateChange", function(state) {
+          if (state.connected) {
+            resolve();
+          }
+          else {
+            reject();
+          }
         });
+      }
+    });
+  };
 
-        pendingRequests.push(requestToProcess);
-        console.log("Queueing request: "+requestToProcess);
-        performNextRequest();
-        return completionPromise;
-    };
+  /**
+  * Determine if currently connected to the hyperdeck.
+  * @return boolean true if connected, false otherwise.
+  */
+  this.isConnected = function() {
+    return connected;
+  };
 
-    /**
-    * Determine if currently connected to the hyperdeck.
-    * @return boolean true if connected, false otherwise.
-    */
-    this.isConnected = function() {
-        return connected;
-    };
-
-    /**
-    * Get the notifier.
-    * Events with id "asynchronousEvent" will be emitted from this for asynchronous events
-    * from the hyperdeck.
-    */
-    this.getNotifier = function() {
-       return notifier;
-    };
+  /**
+  * Get the notifier.
+  * Events with id "asynchronousEvent" will be emitted from this for asynchronous events
+  * from the hyperdeck.
+  * "connectionLost" is emitted if the hyperdeck connection is lost (or fails to connect)
+  */
+  this.getNotifier = function() {
+     return publicNotifier;
+  };
 }
 
 module.exports = Hyperdeck;

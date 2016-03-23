@@ -1,5 +1,5 @@
 /*jshint latedef: false */
-var ResponseHandler = require('./response-handler.js');
+var ResponseHandler = require('./response-handler');
 var Promise = require('promise');
 var net = require('net');
 var events = require('events');
@@ -57,7 +57,6 @@ function Hyperdeck(ip) {
   }
 
   function registerAsyncResponseListener() {
-    console.log("registered async listener");
     responseHandler.getNotifier().on("asynchronousResponse", function(data) {
       // the developer will listen on the notifier for asynchronous events
       // fired from the hyperdeck
@@ -166,7 +165,6 @@ function Hyperdeck(ip) {
   var requestCompletionPromises = [];
   var requestInProgress = false;
 
-  var responseHandler = new ResponseHandler(client);
   var connecting = true;
   var socketConnected = false;
   // hyperdeck connection completed
@@ -185,7 +183,7 @@ function Hyperdeck(ip) {
   // when the connection closes handle this
   // this should also happen if the connectionf fails
   client.on("close", onConnectionLost);
-
+  var responseHandler = new ResponseHandler(client);
 
   /**
    * Make a request to the hyperdeck.

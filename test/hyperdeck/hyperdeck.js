@@ -33,7 +33,7 @@ var FAILURE_DATA = {
 // require Hyperdeck but overriding the require("net") and require("ResponseHandler") to use our stubs
 var Hyperdeck = proxyquire('../../src/hyperdeck/hyperdeck', {
   'net': getNetStub(),
-  './response-handler.js': getResponseHandlerStub()
+  './response-handler': getResponseHandlerStub()
 });
 
 

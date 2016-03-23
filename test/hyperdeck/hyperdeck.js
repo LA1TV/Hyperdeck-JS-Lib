@@ -1,8 +1,9 @@
 var proxyquire =  require('proxyquire');
 var events = require('events');
 
-var responseHandlerNotifier = new events.EventEmitter();
+var responseHandlerNotifier = null;
 var onSocketWrite = null;
+var onConnectionCompleted = null;
 var ASYNCHRONOUS_EVENT_DATA = {
   code: 512,
   text: "Async event",
@@ -46,11 +47,14 @@ describe('Hyperdeck', function() {
   });
 
   afterEach(function() {
-    // TODO call destroy() on hyperdeck
+    // this is important to make sure nothing is still relying on the things
+    // we've mocked after this.
+    hyperdeck.destroy();
+    responseHandlerNotifier = null;
   });
 
   it('can be constructed', function() {
-      hyperdeck.should.be.ok;
+    hyperdeck.should.be.ok;
   });
 
   it('triggers asynchronousEvent when the responseHandler gets an async response message.', function(done) {
@@ -103,9 +107,28 @@ describe('Hyperdeck', function() {
 function getNetStub() {
   var netStub = {
     connect: function(opts, onSuccess) {
+      var onCloseListeners = [];
+      var destroyed = false;
       // async
       setTimeout(function() {
+        if (destroyed) return;
         onSuccess();
+        setTimeout(function() {
+          if (destroyed) return;
+          // fake hyperdeck connection response
+          responseHandlerNotifier.emit("asynchronousResponse", {
+            code: 500,
+            text: "connection info",
+            params: {
+              "protocol version": "some protocol version",
+              model: "some model"
+            }
+          });
+          // allow tests to hook code that should run when connection completes
+          if (onConnectionCompleted) {
+            onConnectionCompleted();
+          }
+        }, 0);
       }, 0);
       return {
         write: function(data) {
@@ -115,11 +138,20 @@ function getNetStub() {
         },
         on: function(evt, listener) {
           if (evt === "close") {
-            
+            onCloseListeners.push(listener);
           }
           else {
             throw new Error("Not supported in mock net.");
           }
+        },
+        destroy: function() {
+          if (destroyed) {
+            throw new Error("Already destroyed.");
+          }
+          destroyed = true;
+          onCloseListeners.forEach(function(listener) {
+            listener();
+          });
         }
       }
     }
@@ -129,11 +161,21 @@ function getNetStub() {
 
 function getResponseHandlerStub() {
 
-  function ResponseHandler() {}
-  // we can now use this event emitter to emit events from the mocked ResponseHandler
-  ResponseHandler.prototype.getNotifier = function() {
-    return responseHandlerNotifier;
-  };
+  function ResponseHandler() {
+    if (responseHandlerNotifier) {
+      throw new Error("responseHandlerNotifier should have been destroyed after each test.");
+    }
+    var notifier = new events.EventEmitter();
+    // we can now use this event emitter to emit events from the mocked ResponseHandler
+    responseHandlerNotifier = notifier;
+    this.getNotifier = function() {
+      return notifier;
+    };
+    this.destroy = function() {
+      // make sure nothing tries to emit events now
+      responseHandlerNotifier = null;
+    };
+  }
   return ResponseHandler;
 }
 
@@ -143,7 +185,6 @@ function queueFakeSuccesfulSynchronousResponse(fakeAsync) {
   if (onSocketWrite) {
     throw new Error("onSocketWrite already set. Should be cleared after use.");
   }
-
   // will be called when the Hyperdeck writes to the socket.
   onSocketWrite = function(data) {
     onSocketWrite = null;
@@ -152,7 +193,7 @@ function queueFakeSuccesfulSynchronousResponse(fakeAsync) {
     setTimeout(function() {
       if (fakeAsync) {
         // fake an async response first
-        fakeAsyncResponse();
+        responseHandlerNotifier.emit("asynchronousResponse", ASYNCHRONOUS_EVENT_DATA);
       }
       setTimeout(function() {
         responseHandlerNotifier.emit("synchronousResponse", {
@@ -170,7 +211,6 @@ function queueFakeFailureSynchronousResponse() {
   if (onSocketWrite) {
     throw new Error("onSocketWrite already set. Should be cleared after use.");
   }
-
   // will be called when the Hyperdeck writes to the socket.
   onSocketWrite = function(data) {
     onSocketWrite = null;
@@ -186,5 +226,11 @@ function queueFakeFailureSynchronousResponse() {
 }
 
 function fakeAsyncResponse() {
-  responseHandlerNotifier.emit("asynchronousResponse", ASYNCHRONOUS_EVENT_DATA);
+  if (onConnectionCompleted) {
+    throw new Error("onConnectionCompleted already set. Should be cleared after use.");
+  }
+  onConnectionCompleted = function() {
+    onConnectionCompleted = null;
+    responseHandlerNotifier.emit("asynchronousResponse", ASYNCHRONOUS_EVENT_DATA);
+  };
 }

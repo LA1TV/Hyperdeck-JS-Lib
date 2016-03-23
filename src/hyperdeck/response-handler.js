@@ -1,14 +1,15 @@
 var events = require('events');
 var Parser = require('./parser');
 
-var notifier = new events.EventEmitter();
-
 /**
  * Handles responses from they hyperdeck.
  */
 // TODO add a destroy method which will remove the listener.
 function ResponseHandler(clientSocket) {
-  clientSocket.on('data', function(rawData) {
+  var destroyed = false;
+  var notifier = new events.EventEmitter();
+  
+  function onData(rawData) {
     var data = Parser.parse(rawData);
     switch (data.type) {
       case "synchronousFailure":
@@ -25,11 +26,21 @@ function ResponseHandler(clientSocket) {
       default:
         throw "Unknown response type.";
     }
-  });
-}
+  }
 
-ResponseHandler.prototype.getNotifier = function() {
-  return notifier;
-};
+  clientSocket.on('data', onData);
+
+  this.getNotifier = function() {
+    return notifier;
+  };
+
+  this.destroy = function() {
+    if (destroyed) {
+      return;
+    }
+    destroyed = true;
+    clientSocket.removeListener('data', onData);
+  };
+}
 
 module.exports = ResponseHandler;

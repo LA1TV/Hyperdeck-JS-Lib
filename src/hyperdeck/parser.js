@@ -38,7 +38,6 @@ function convertDataToObject(data) {
  * Parses responses from the hyperdeck into a nice object.
  */
  function failureResponseCode(data) {
-  console.log("failure", convertDataToObject(data));
    return {
      type: "synchronousFailure",
      data: convertDataToObject(data)

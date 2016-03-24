@@ -4,11 +4,10 @@ var Parser = require('./parser');
 /**
  * Handles responses from they hyperdeck.
  */
-// TODO add a destroy method which will remove the listener.
 function ResponseHandler(clientSocket) {
   var destroyed = false;
   var notifier = new events.EventEmitter();
-  
+
   function onData(rawData) {
     var data = Parser.parse(rawData);
     switch (data.type) {

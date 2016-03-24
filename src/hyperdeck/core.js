@@ -11,7 +11,7 @@ var events = require('events');
  * You can also listen for asynchronous events sent from the hyperdeck.
  * @param ip, The IP address of the hyperdeck.
  **/
-function Hyperdeck(ip) {
+function HyperdeckCore(ip) {
 
   function onConnectionStateChange(state) {
     if (!state.connected) {
@@ -269,4 +269,4 @@ function Hyperdeck(ip) {
   };
 }
 
-module.exports = Hyperdeck;
+module.exports = HyperdeckCore;

@@ -31,14 +31,14 @@ var FAILURE_DATA = {
 };
 
 // require Hyperdeck but overriding the require("net") and require("ResponseHandler") to use our stubs
-var Hyperdeck = proxyquire('../../src/hyperdeck/hyperdeck', {
+var Hyperdeck = proxyquire('../../src/hyperdeck/hyperdeck-core', {
   'net': getNetStub(),
   './response-handler': getResponseHandlerStub()
 });
 
 
 describe('Hyperdeck', function() {
-  
+
   var hyperdeck = null;
 
   // create a new response handler (and fake socket) before each test
@@ -141,7 +141,7 @@ function getNetStub() {
             onCloseListeners.push(listener);
           }
           else if (evt === "error") {
-            
+
           }
           else {
             throw new Error("Not supported in mock net.");

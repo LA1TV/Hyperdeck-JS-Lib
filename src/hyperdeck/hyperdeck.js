@@ -1,4 +1,4 @@
-var HyperdeckCore = require("./core.js");
+var HyperdeckCore = require("./hyperdeck-core.js");
 var Promise = require('promise');
 
 

@@ -4,7 +4,6 @@
   "description": "A javascript library for communication with the Blackmagic Hyperdeck.",
   "main": "src/index.js",
   "dependencies": {
-    "net": "^1.0.2",
     "promise": "^7.1.1"
   },
   "devDependencies": {

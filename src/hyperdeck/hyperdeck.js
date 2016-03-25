@@ -14,10 +14,14 @@ var Hyperdeck = function(ip) {
   //make Easy Access commands
   this.play = function(speed) {
     var commandString;
-    if (speed<=1600 || speed >= -1600) {
-      commandString = "play";
-    } else {
+    if (Math.abs(speed) <= 1600) {
       commandString = "play speed: " + speed;
+    } else {
+      if (speed) {
+        throw "Speed out of range";
+      } else {
+        commandString = "play";
+      }
     }
     return Core.makeRequest(commandString);
   };
@@ -28,11 +32,11 @@ var Hyperdeck = function(ip) {
   };
 
   this.record = function() {
-      return Core.makeRequest("record");
+    return Core.makeRequest("record");
   };
-  
-  this.goTo = function(timecode){
-    return Core.makeRequest("goto: timecode: "+timecode);
+
+  this.goTo = function(timecode) {
+    return Core.makeRequest("goto: timecode: " + timecode);
   };
 
 

@@ -24,7 +24,7 @@ var Hyperdeck = function(ip) {
       commandString = "play speed: " + speed;
     } else {
       if (speed) {
-        throw "Speed out of range";
+        throw new Error("Speed value invalid or out of range");
       } else {
         commandString = "play";
       }

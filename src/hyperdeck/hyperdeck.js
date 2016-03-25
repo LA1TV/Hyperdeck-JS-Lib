@@ -1,5 +1,4 @@
 var HyperdeckCore = require("./hyperdeck-core.js");
-var Promise = require('promise');
 
 
 var Hyperdeck = function(ip) {
@@ -20,32 +19,16 @@ var Hyperdeck = function(ip) {
     } else {
       commandString = "play speed: " + speed;
     }
-    return new Promise(function(fulfill, reject) {
-      Core.makeRequest(commandString).then(function(response) {
-        fulfill(response);
-      }).catch(function(errResponse) {
-        reject(errResponse.code);
-      });
-    });
+    return Core.makeRequest(commandString);
   };
+
+
   this.stop = function() {
-    return new Promise(function(fulfill, reject) {
-      Core.makeRequest("stop").then(function(response) {
-        fulfill(response);
-      }).catch(function(errResponse) {
-        reject(errResponse.code);
-      });
-    });
+    return Core.makeRequest("stop");
   };
 
   this.record = function() {
-    return new Promise(function(fulfill, reject) {
-      Core.makeRequest("record").then(function(response) {
-        fulfill(response);
-      }).catch(function(errResponse) {
-        reject(errResponse.code);
-      });
-    });
+      return Core.makeRequest("record");
   };
 
 };

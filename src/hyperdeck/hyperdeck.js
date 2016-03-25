@@ -30,6 +30,11 @@ var Hyperdeck = function(ip) {
   this.record = function() {
       return Core.makeRequest("record");
   };
+  
+  this.goTo = function(timecode){
+    return Core.makeRequest("goto: timecode: "+timecode);
+  };
+
 
 };
 

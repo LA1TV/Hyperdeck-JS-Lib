@@ -15,10 +15,10 @@ var Hyperdeck = function(ip) {
   //make Easy Access commands
   this.play = function(speed) {
     var commandString;
-    if (!speed) {
+    if (speed<=1600 || speed >= -1600) {
       commandString = "play";
     } else {
-      commandString = "play speed: " + speed.toString();
+      commandString = "play speed: " + speed;
     }
     return new Promise(function(fulfill, reject) {
       Core.makeRequest(commandString).then(function(response) {

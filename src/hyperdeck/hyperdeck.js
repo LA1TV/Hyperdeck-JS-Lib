@@ -4,6 +4,12 @@ var HyperdeckCore = require("./hyperdeck-core.js");
 var Hyperdeck = function(ip) {
   //Start by connecting to Hyperdeck via HypderdeckCore
   var Core = new HyperdeckCore(ip);
+  Core.makeRequest("notify: remote: true");
+  Core.makeRequest("notify: transport: true");
+  Core.makeRequest("notify: slot: true");
+  Core.makeRequest("notify: configuration: true");
+
+
 
 
   //Publicise functions from Core

@@ -1,23 +1,17 @@
+var util = require('util');
 var HyperdeckCore = require("./hyperdeck-core.js");
 
-
 var Hyperdeck = function(ip) {
-  //Start by connecting to Hyperdeck via HypderdeckCore
-  var Core = new HyperdeckCore(ip);
-  Core.makeRequest("notify: remote: true");
-  Core.makeRequest("notify: transport: true");
-  Core.makeRequest("notify: slot: true");
-  Core.makeRequest("notify: configuration: true");
 
+  // call constructor of HyperdeckCore
+  HyperdeckCore.call(this, ip);
 
+  this.makeRequest("notify: remote: true");
+  this.makeRequest("notify: transport: true");
+  this.makeRequest("notify: slot: true");
+  this.makeRequest("notify: configuration: true");
 
-
-  //Publicise functions from Core
-  this.getNotifier = Core.getNotifier();
-  this.makeRequest = Core.makeRequest();
-  this.onConnected = Core.onConnected();
-
-  //make Easy Access commands
+  // add Easy Access commands
   this.play = function(speed) {
     var commandString;
     if (Math.abs(speed) <= 1600) {
@@ -29,45 +23,48 @@ var Hyperdeck = function(ip) {
         commandString = "play";
       }
     }
-    return Core.makeRequest(commandString);
+    return this.makeRequest(commandString);
   };
 
   this.stop = function() {
-    return Core.makeRequest("stop");
+    return this.makeRequest("stop");
   };
 
   this.record = function() {
-    return Core.makeRequest("record");
+    return this.makeRequest("record");
   };
 
   this.goTo = function(timecode) {
-    return Core.makeRequest("goto: timecode: " + timecode);
+    return this.makeRequest("goto: timecode: " + timecode);
   };
 
   this.slotInfo = function (id) {
     if (id === 0 || id === 1 || id === 2){ //TO DO find if it's 0-1 or 1-2
-      return Core.makeRequest("slot info: slot id: " + id);
+      return this.makeRequest("slot info: slot id: " + id);
     } else{
       if (!id){
-        return Core.makeRequest("slot info");
+        return this.makeRequest("slot info");
       }
-      return new Error("Slot ID Value out of range");
+      throw new Error("Slot ID Value out of range");
     }
   };
 
   this.transportInfo = function(){
-    return Core.makeRequest("transport info");
+    return this.makeRequest("transport info");
   };
 
   this.clipsGet = function(){
-    return Core.makeRequest("clips get");
+    return this.makeRequest("clips get");
   };
 
   this.slotSelect = function(id){
-    return Core.makeRequest("slot select: slot id: " + id);
+    return this.makeRequest("slot select: slot id: " + id);
   };
 
 };
 
+// make this class extend HyperdeckCore
+// https://nodejs.org/docs/latest/api/util.html#util_util_inherits_constructor_superconstructor
+util.inherits(Hyperdeck, HyperdeckCore);
 
 module.exports = Hyperdeck;

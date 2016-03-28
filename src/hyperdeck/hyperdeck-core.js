@@ -12,6 +12,7 @@ var events = require('events');
  * @param ip, The IP address of the hyperdeck.
  **/
 function HyperdeckCore(ip) {
+  var self = this;
 
   function onConnectionStateChange(state) {
     if (!state.connected) {
@@ -32,6 +33,7 @@ function HyperdeckCore(ip) {
         connecting = false;
         registerAsyncResponseListener();
         notifier.emit("connectionStateChange", {connected: true});
+        pingTimerId = setInterval(ping, 10000);
         // a request might have been queued whilst the connection
         // was being made
         performNextRequest();
@@ -72,8 +74,16 @@ function HyperdeckCore(ip) {
     connecting = false;
     connected = false;
     socketConnected = false;
+    if (pingTimerId !== null) {
+      clearTimeout(pingTimerId);
+      pingTimerId = null;
+    }
     notifier.emit("connectionStateChange", {connected: false});
     performNextRequest();
+  }
+
+  function ping() {
+    self.makeRequest("ping");
   }
 
   /**
@@ -169,6 +179,7 @@ function HyperdeckCore(ip) {
   var socketConnected = false;
   // hyperdeck connection completed
   var connected = false;
+  var pingTimerId = null;
   notifier.on("connectionStateChange", onConnectionStateChange);
 
   var client = net.connect({

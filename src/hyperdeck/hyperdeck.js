@@ -32,7 +32,6 @@ var Hyperdeck = function(ip) {
     return Core.makeRequest(commandString);
   };
 
-
   this.stop = function() {
     return Core.makeRequest("stop");
   };
@@ -45,7 +44,30 @@ var Hyperdeck = function(ip) {
     return Core.makeRequest("goto: timecode: " + timecode);
   };
 
+  this.slotInfo = function (id) {
+    if (id === 0 || id === 1 || id === 2){ //TO DO find if it's 0-1 or 1-2
+      return Core.makeRequest("slot info: slot id: " + id);
+    } else{
+      if (!id){
+        return Core.makeRequest("slot info");
+      }
+      return new Error("Slot ID Value out of range");
+    }
+  };
+
+  this.transportInfo = function(){
+    return Core.makeRequest("transport info");
+  };
+
+  this.clipsGet = function(){
+    return Core.makeRequest("clips get");
+  };
+
+  this.slotSelect = function(id){
+    return Core.makeRequest("slot select: slot id: " + id);
+  };
 
 };
+
 
 module.exports = Hyperdeck;

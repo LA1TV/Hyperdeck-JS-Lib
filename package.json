@@ -24,8 +24,17 @@
     "type": "git",
     "url": "git+https://github.com/LA1TV/Hyperdeck-JS-Lib.git"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "blackmagic",
+    "hyperdeck",
+    "node",
+    "nodejs",
+    "javascript",
+    "api",
+    "blackmagic design"
+  ],
+  "author": "LA1:TV",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/LA1TV/Hyperdeck-JS-Lib/issues"
   },

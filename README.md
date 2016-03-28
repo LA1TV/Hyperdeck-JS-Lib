@@ -8,6 +8,7 @@ A javascript library for communication with the Blackmagic Hyperdeck.
 # Installing
 `npm install --save hyperdeck-js-lib`
 
+
 # Using The Library
 The `makeRequest()` function returns a promise which will resolve with the response from the hyperdeck if it is a succcesful response. Otherwise it will reject. If the connection was lost the response object will be `null` otherwise it will be the error response from the hyperdeck.
 
@@ -49,6 +50,22 @@ hyperdeck.onConnected().then(function() {
 	console.error("Failed to connect to hyperdeck.");
 });
 ```
+
+There are a number of different predefined commands which can be called upon:
+
+```javascript
+hyperdeck.play();
+hyperdeck.play(35); //play at 35%
+hyperdeck.stop();
+hyperdeck.record();
+hyperdeck.goTo("00:13:03:55"); //goes to timecode in format hh:mm:ss:ff
+hyperdeck.slotSelect(2);
+hyperdeck.slotInfo(); //Gives info on currently selected slot
+hyperdeck.slotInfo(1);
+hyperdeck.clipsGet();
+hyperdeck.transportInfo();
+```
+
 
 # API Documentation
 The hyperdeck API documentation can be found at "https://www.blackmagicdesign.com/uk/manuals/HyperDeck/HyperDeck_Manual.pdf".

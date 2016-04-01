@@ -163,7 +163,7 @@ function HyperdeckCore(ip) {
       // either the "synchronousResponse" or "connectionLost" event should be
       // fired at some point in the future.
       //console.log("Making request: "+request);
-      client.write(request);
+      client.write(request+"\n");
     }
   }
 

@@ -15,7 +15,7 @@ var Hyperdeck = function(ip) {
   this.play = function(speed) {
     var commandString;
     if (Math.abs(speed) <= 1600) {
-      commandString = "play speed: " + speed;
+      commandString = "play: speed: " + speed;
     } else {
       if (speed) {
         throw new Error("Speed value invalid or out of range");

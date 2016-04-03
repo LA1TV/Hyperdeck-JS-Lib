@@ -9,20 +9,22 @@ function ResponseHandler(clientSocket) {
   var notifier = new events.EventEmitter();
   var buffer = "";
   
-  // we have received a complete message when the first line does not end in ":",
-  // or the last line is empty
   function isBufferComplete() {
     var lines = buffer.split("\r\n");
+    // there will always be an empty element at the end as every line will always end in "\r\n"
+    // so remove it.
+    // i.e. "1\r\n2\r\n" => ["1", "2", ""]
+    lines.pop();
     if (lines.length === 1) {
       // is it a single line response?
       return lines[0].indexOf(":") !== lines[0].length-1;
-    }
+    } 
     // multi line response so waiting for a blank line to signify end
     return lines[lines.length-1] === "";
   }
   
   function onData(rawData) {
-    buffer += rawData.toString();
+    buffer += rawData;
     if (!isBufferComplete()) {
       return;
     }

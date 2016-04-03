@@ -276,6 +276,7 @@ function HyperdeckCore(ip) {
       return;
     }
     destroyed = true;
+    client.write('quit\n');
     responseHandler.destroy();
     client.destroy();
   };

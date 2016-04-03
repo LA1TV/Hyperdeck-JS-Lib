@@ -7,9 +7,29 @@ var Parser = require('./parser');
 function ResponseHandler(clientSocket) {
   var destroyed = false;
   var notifier = new events.EventEmitter();
-
+  var buffer = "";
+  
+  // we have received a complete message when the first line does not end in ":",
+  // or the last line is empty
+  function isBufferComplete() {
+    var lines = buffer.split("\r\n");
+    if (lines.length === 1) {
+      // is it a single line response?
+      return lines[0].indexOf(":") !== lines[0].length-1;
+    }
+    // multi line response so waiting for a blank line to signify end
+    return lines[lines.length-1] === "";
+  }
+  
   function onData(rawData) {
-    var data = Parser.parse(rawData);
+    buffer += rawData.toString();
+    if (!isBufferComplete()) {
+      return;
+    }
+    var data = Parser.parse(buffer);
+    // reset buffer
+    buffer = "";
+  
     switch (data.type) {
       case "synchronousFailure":
       case "synchronousSuccess":

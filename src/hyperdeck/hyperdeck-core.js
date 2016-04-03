@@ -191,6 +191,7 @@ function HyperdeckCore(ip) {
     // wait for the hyperdeck to confirm it's ready and connected.
     handleConnectionResponse();
   });
+  client.setEncoding("utf8");
   client.on("error", function(/*e*/) {
     //console.warn("Socket error.", e);
   });

@@ -60,9 +60,8 @@ function convertDataToObject(data) {
 
 var Parser = {
 
-  parse: function(payload) {
-    //Convert to string then pass into the switch/case to decide which function to use.
-    var data = payload.toString();
+  parse: function(data) {
+    // pass into the switch/case to decide which function to use.
     switch (data.charAt(0)){
       case "1":
         return failureResponseCode(data);

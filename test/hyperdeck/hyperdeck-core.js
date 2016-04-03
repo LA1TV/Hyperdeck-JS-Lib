@@ -147,6 +147,9 @@ function getNetStub() {
             throw new Error("Not supported in mock net.");
           }
         },
+        setEncoding: function() {
+
+        },
         destroy: function() {
           if (destroyed) {
             throw new Error("Already destroyed.");

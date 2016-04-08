@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm-dl/hyperdeck-js-lib.png?months=1)](https://nodei.co/npm/hyperdeck-js-lib/)
+
 [![Build Status](https://travis-ci.org/LA1TV/Hyperdeck-JS-Lib.svg?branch=master)](https://travis-ci.org/LA1TV/Hyperdeck-JS-Lib)
 [![npm version](https://badge.fury.io/js/hyperdeck-js-lib.svg)](https://badge.fury.io/js/hyperdeck-js-lib)
 

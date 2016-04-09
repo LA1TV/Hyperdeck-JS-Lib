@@ -2,5 +2,6 @@
 
 module.exports = {
 	Hyperdeck: require("./hyperdeck/hyperdeck"),
-	HyperdeckCore: require("./hyperdeck/hyperdeck-core")
+	HyperdeckCore: require("./hyperdeck/hyperdeck-core"),
+	Logger: require("./logger")
 };

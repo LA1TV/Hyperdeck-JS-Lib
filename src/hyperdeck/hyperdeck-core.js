@@ -3,6 +3,9 @@ var ResponseHandler = require('./response-handler');
 var Promise = require('promise');
 var net = require('net');
 var events = require('events');
+var Logger = require("../logger");
+
+var logger = Logger.get("hyperdeck.HyperdeckCore");
 
 /**
  * Represents a Hyperdeck.
@@ -87,6 +90,12 @@ function HyperdeckCore(ip) {
     return request.indexOf("\r") === -1 && request.indexOf("\n") === -1;
   }
 
+  // write to the socket
+  function write(data) {
+    logger.debug("Writing to socket.", data);
+    client.write(data);
+  }
+
   function ping() {
     self.makeRequest("ping");
   }
@@ -128,7 +137,7 @@ function HyperdeckCore(ip) {
     }
 
     function handleResponse(response) {
-      //console.log("Got response. Resolving provided promise with response.");
+      logger.debug("Got response. Resolving provided promise with response.");
       removeListeners();
       if (response.success) {
         // response has a success status code
@@ -149,7 +158,7 @@ function HyperdeckCore(ip) {
     }
 
     function onConnectionLost() {
-      //console.log("Connection lost. Rejecting provided promise to signify failure.");
+      logger.debug("Connection lost. Rejecting provided promise to signify failure.");
       removeListeners();
       // null to signify connection loss
       requestCompletionPromise.reject(null);
@@ -159,7 +168,7 @@ function HyperdeckCore(ip) {
     if (!connected) {
       // connection has been lost
       // don't even attempt the request
-      //console.log("Not attempting request because connection lost.");
+      logger.debug("Not attempting request because connection lost.");
       onConnectionLost();
     }
     else {
@@ -167,8 +176,8 @@ function HyperdeckCore(ip) {
       // make the request
       // either the "synchronousResponse" or "connectionLost" event should be
       // fired at some point in the future.
-      //console.log("Making request: "+request);
-      client.write(request+"\n");
+      logger.info("Making request.", request);
+      write(request+"\n");
     }
   }
 
@@ -191,14 +200,14 @@ function HyperdeckCore(ip) {
     host: ip,
     port: 9993
   }, function() {
-    //console.log('Socket connected.');
+    logger.info('Socket connected.');
     socketConnected = true;
     // wait for the hyperdeck to confirm it's ready and connected.
     handleConnectionResponse();
   });
   client.setEncoding("utf8");
-  client.on("error", function(/*e*/) {
-    //console.warn("Socket error.", e);
+  client.on("error", function(e) {
+    logger.warn("Socket error.", e);
   });
   // when the connection closes handle this
   // this should also happen if the connection fails at some point
@@ -229,7 +238,7 @@ function HyperdeckCore(ip) {
     });
 
     pendingRequests.push(requestToProcess);
-    //console.log("Queueing request: "+requestToProcess);
+    logger.info("Queueing request.", requestToProcess);
     performNextRequest();
     return completionPromise;
   };
@@ -284,8 +293,9 @@ function HyperdeckCore(ip) {
     if (destroyed) {
       return;
     }
+    logger.debug('Destroying...');
     destroyed = true;
-    client.write('quit\n');
+    write('quit\n');
     responseHandler.destroy();
     client.destroy();
   };

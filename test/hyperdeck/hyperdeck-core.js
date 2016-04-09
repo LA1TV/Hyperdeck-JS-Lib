@@ -57,6 +57,18 @@ describe('Hyperdeck', function() {
     hyperdeck.should.be.ok;
   });
 
+  it('throws an exception if request contains a new line', function() {
+    (function() {
+      hyperdeck.makeRequest("something\r");
+    }).should.throw();
+    (function() {
+      hyperdeck.makeRequest("something\r");
+    }).should.throw();
+    (function() {
+      hyperdeck.makeRequest("something\r\n");
+    }).should.throw();
+  });
+
   it('triggers asynchronousEvent when the responseHandler gets an async response message.', function(done) {
       hyperdeck.getNotifier().once("asynchronousEvent", function(data) {
         data.should.eql(ASYNCHRONOUS_EVENT_DATA);

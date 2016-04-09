@@ -82,6 +82,11 @@ function HyperdeckCore(ip) {
     performNextRequest();
   }
 
+  function isValidRequest(request) {
+    // requests must not contain new lines
+    return request.indexOf("\r") === -1 && request.indexOf("\n") === -1;
+  }
+
   function ping() {
     self.makeRequest("ping");
   }
@@ -212,17 +217,21 @@ function HyperdeckCore(ip) {
    *         (or connection lost).
    */
   this.makeRequest = function(requestToProcess) {
-      var completionPromise = new Promise(function(resolve, reject) {
-          requestCompletionPromises.push({
-              resolve: resolve,
-              reject: reject
-          });
-      });
+    if (!isValidRequest(requestToProcess)) {
+      throw new Error("Invalid request.");
+    }
 
-      pendingRequests.push(requestToProcess);
-      //console.log("Queueing request: "+requestToProcess);
-      performNextRequest();
-      return completionPromise;
+    var completionPromise = new Promise(function(resolve, reject) {
+      requestCompletionPromises.push({
+        resolve: resolve,
+        reject: reject
+      });
+    });
+
+    pendingRequests.push(requestToProcess);
+    //console.log("Queueing request: "+requestToProcess);
+    performNextRequest();
+    return completionPromise;
   };
 
   /**

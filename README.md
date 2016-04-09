@@ -68,6 +68,18 @@ hyperdeck.clipsGet();
 hyperdeck.transportInfo();
 ```
 
-
 # API Documentation
 The hyperdeck API documentation can be found at "https://www.blackmagicdesign.com/uk/manuals/HyperDeck/HyperDeck_Manual.pdf".
+
+# Debugging
+You can enable logging:
+
+```javascript
+var HyperdeckLib = require("hyperdeck-js-lib");
+var Logger = HyperdeckLib.Logger;
+Logger.setLevel(Logger.DEBUG);
+Logger.setLevel(Logger.INFO);
+Logger.setLevel(Logger.WARN);
+Logger.setLevel(Logger.ERROR);
+Logger.setLevel(Logger.OFF);
+```

@@ -1,5 +1,8 @@
 var events = require('events');
 var Parser = require('./parser');
+var Logger = require("../logger");
+
+var logger = Logger.get("hyperdeck.ResponseHandler");
 
 /**
  * Handles responses from they hyperdeck.
@@ -28,6 +31,7 @@ function ResponseHandler(clientSocket) {
     if (!isBufferComplete()) {
       return;
     }
+    logger.debug('Got data on socket.', rawData);
     var data = Parser.parse(buffer);
     // reset buffer
     buffer = "";
@@ -59,6 +63,7 @@ function ResponseHandler(clientSocket) {
     if (destroyed) {
       return;
     }
+    logger.debug('Destroying...');
     destroyed = true;
     clientSocket.removeListener('data', onData);
   };

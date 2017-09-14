@@ -18,17 +18,23 @@ function convertDataToObject(data) {
   dataObject.code = code;
   dataObject.text = text;
 
-  if (firstLineMatches[3] === ":") {
-    // the response has parameters on following lines
-    var params = {};
-    //Append the rest into an object for emitting.
-    lines.forEach(function(line) {
-      var lineData = /^(.*)\: (.*)$/.exec(line);
-      //First element in array is the whole string.
-      if(lineData) {
-        params[lineData[1]] = lineData[2];
-      }
-    });
+   if (firstLineMatches[3] === ":") {
+    if (dataObject.text == "commands") {
+      //this response is all XML and doesn't match the other response structures
+      var params = {};
+      params['response'] == data;
+    } else {
+      // the response has parameters on following lines
+      var params = {};
+      //Append the rest into an object for emitting.
+      lines.forEach(function (line) {
+          var lineData = /^(.*)\: (.*)$/.exec(line);
+          //First element in array is the whole string.
+          if (lineData) {
+            params[lineData[1]] = lineData[2];
+          }
+        }
+      });
     dataObject.params = params;
   }
   return dataObject;

@@ -2,11 +2,10 @@
 
 [![Build Status](https://travis-ci.org/LA1TV/Hyperdeck-JS-Lib.svg?branch=master)](https://travis-ci.org/LA1TV/Hyperdeck-JS-Lib)
 [![npm version](https://badge.fury.io/js/hyperdeck-js-lib.svg)](https://badge.fury.io/js/hyperdeck-js-lib)
+[![Greenkeeper badge](https://badges.greenkeeper.io/LA1TV/Hyperdeck-JS-Lib.svg)](https://greenkeeper.io/)
 
 Hyperdeck-JS-Lib
 ----------------
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/LA1TV/Hyperdeck-JS-Lib.svg)](https://greenkeeper.io/)
 A javascript library for communication with the Blackmagic Hyperdeck.
 
 # Installing

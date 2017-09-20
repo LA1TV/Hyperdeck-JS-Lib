@@ -5,6 +5,8 @@
 
 Hyperdeck-JS-Lib
 ----------------
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/LA1TV/Hyperdeck-JS-Lib.svg)](https://greenkeeper.io/)
 A javascript library for communication with the Blackmagic Hyperdeck.
 
 # Installing

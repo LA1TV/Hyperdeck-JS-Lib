@@ -19,7 +19,7 @@ function convertDataToObject(data) {
   dataObject.text = text;
 
    if (firstLineMatches[3] === ":") {
-    if (dataObject.text == "commands") {
+    if (text == "commands") {
       //this response is all XML and doesn't match the other response structures
       var params = {};
       params['response'] == data;

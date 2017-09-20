@@ -14,9 +14,7 @@ gulp.task('test', function() {
     // gulp-mocha needs filepaths so you can't have any plugins before it 
     .pipe(mocha({
         reporter: 'spec',
-        globals: {
-            should: require('should')
-        }
+        require: ['should']
     }));
 });
 

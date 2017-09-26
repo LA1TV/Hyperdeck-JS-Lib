@@ -16,7 +16,7 @@
     "mocha": "^3.0.2",
     "proxyquire": "^1.7.4",
     "should": "^13.1.0",
-    "sinon": "^3.3.0"
+    "sinon": "^4.0.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/gulp"

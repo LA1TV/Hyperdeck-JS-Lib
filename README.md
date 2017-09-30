@@ -19,7 +19,9 @@ The response is an object with the following properties:
 - `code`: The nuemeric response code.
 - `text`: The response text.
 
-It may contain another key `params` which will be an object where the keys are the parameter keys in the response, and the values are the corresponding values in the response. If the response from the hyperdeck doesn't support parameters this key won't exist.
+If the response from the hyperdeck also contains data the following keys will also exist:
+- `rawData`: A string which contains the unparsed data.
+- `params`: An object where the keys are the parameter keys in the response, and the values are the corresponding values in the response. This is best-effort, and if the response is not structured in the params format shown in the documentation, may be an empty object. It will try to parse each line in the response individually.
 
 ```javascript
 var HyperdeckLib = require("hyperdeck-js-lib");

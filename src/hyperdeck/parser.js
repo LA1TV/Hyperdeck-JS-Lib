@@ -19,7 +19,12 @@ function convertDataToObject(data) {
   dataObject.text = text;
 
   if (firstLineMatches[3] === ":") {
-    // the response has parameters on following lines
+    // the response has data on following lines
+    // provide the raw data in addition to attempting to parse the response into params
+    dataObject.rawData = lines.slice(0, lines.length-1).join("\r\n");
+
+    // this is a best effort. Some of the responses (e.g 'commands'), do not return
+    // the usual format, and in this case params will likely remain as {}
     var params = {};
     //Append the rest into an object for emitting.
     lines.forEach(function(line) {

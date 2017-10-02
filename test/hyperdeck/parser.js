@@ -21,7 +21,7 @@ var SUCCESS_PARAMS_RESPONSE_DATA = {
     data: {
         code: 200,
         text: "Success with data",
-        rawData: 'something: 123\r\nsomething else: test\r\n',
+        rawData: 'something: 123\r\nsomething else: test',
         params: {
             something: "123",
             "something else": "test"
@@ -34,7 +34,7 @@ var SUCCESS_UNPARSEABLE_PARAMS_RESPONSE_DATA = {
     data: {
         code: 200,
         text: "Success with data",
-        rawData: '<something-unexpected />\r\n',
+        rawData: '<something-unexpected />',
         params: {}
     }
 };
@@ -52,7 +52,7 @@ var FAILURE_PARAMS_RESPONSE_DATA = {
     data: {
         code: 102,
         text: "Failure",
-        rawData: "something: 123\r\nsomething else: test\r\n",
+        rawData: "something: 123\r\nsomething else: test",
         params:  {
             something: "123",
             "something else": "test"
@@ -65,7 +65,7 @@ var ASYNC_RESPONSE_DATA = {
     data: {
         code: 512,
         text: "Async event",
-        rawData: "protocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12\r\n",
+        rawData: "protocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12",
         params: {
             "protocol version": "9.5",
             model: "xyz",

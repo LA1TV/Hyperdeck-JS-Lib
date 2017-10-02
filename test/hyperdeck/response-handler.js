@@ -6,7 +6,7 @@ var SUCCESS_RESPONSE_EVENT_PAYLOAD = {
   data: {
     code: 200,
     text: "Success with data",
-    rawData: "something: 123\r\nsomething else: test\r\n",
+    rawData: "something: 123\r\nsomething else: test",
     params: {
       something: "123",
       "something else": "test"
@@ -20,7 +20,7 @@ var FAILURE_RESPONSE_EVENT_PAYLOAD = {
   data: {
     code: 102,
     text: "Failure",
-    rawData: "something: 123\r\nsomething else: test\r\n",
+    rawData: "something: 123\r\nsomething else: test",
     params: {
       something: "123",
       "something else": "test"
@@ -32,7 +32,7 @@ var ASYNC_RESPONSE = "512 Async event:\r\nprotocol version: 9.5\r\nmodel: xyz\r\
 var ASYNC_RESPONSE_EVENT_PAYLOAD = {
   code: 512,
   text: "Async event",
-  rawData: "protocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12\r\n",
+  rawData: "protocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12",
   params: {
     "protocol version": "9.5",
     model: "xyz",

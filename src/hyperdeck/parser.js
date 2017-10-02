@@ -17,14 +17,16 @@ function convertDataToObject(data) {
   var text = firstLineMatches[2];
   dataObject.code = code;
   dataObject.text = text;
-
-  if (firstLineMatches[3] === ":") {
-    // the response has data on following lines
+  
+  if (lines.length) {
     // provide the raw data in addition to attempting to parse the response into params
-    dataObject.rawData = lines.slice(0, lines.length-1).join("\r\n");
-
-    // this is a best effort. Some of the responses (e.g 'commands'), do not return
-    // the usual format, and in this case params will likely remain as {}
+    dataObject.rawData = lines.slice(0, lines.length-2).join("\r\n");
+  }
+  
+  if (firstLineMatches[3] === ":") {
+    // the response should have params on the next lines
+    // (although sometimes it doesn't because of the responses (e.g 'commands'), do not return
+    // the usual format, and in this case params will likely remain as {})
     var params = {};
     //Append the rest into an object for emitting.
     lines.forEach(function(line) {

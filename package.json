@@ -1,6 +1,6 @@
 {
   "name": "hyperdeck-js-lib",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "A javascript library for communication with the Blackmagic Hyperdeck.",
   "main": "src/index.js",
   "dependencies": {

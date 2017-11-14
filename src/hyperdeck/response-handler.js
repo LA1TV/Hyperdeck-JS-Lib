@@ -53,7 +53,7 @@ function ResponseHandler(clientSocket) {
         default:
           throw "Unknown response type.";
       }
-    }
+    });
   }
 
   clientSocket.on('data', onData);

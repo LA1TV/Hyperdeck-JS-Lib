@@ -40,6 +40,8 @@ var ASYNC_RESPONSE_EVENT_PAYLOAD = {
   }
 };
 
+var COMBINED_RESPONSE = SUCCESS_RESPONSE + FAILURE_RESPONSE + ASYNC_RESPONSE;
+
 describe('ResponseHandler', function() {
 
   var responseHandler = null;
@@ -81,6 +83,20 @@ describe('ResponseHandler', function() {
       done();
     });
     socket.write(ASYNC_RESPONSE);
+  });
+  
+  it('handles multiple responses arriving at the same time', function(done) {
+    responseHandler.getNotifier().once("synchronousResponse", function(response) {
+      response.should.eql(SUCCESS_RESPONSE_EVENT_PAYLOAD);
+      responseHandler.getNotifier().once("synchronousResponse", function(response) {
+        response.should.eql(FAILURE_RESPONSE_EVENT_PAYLOAD);
+        responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+          response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
+          done();
+        });
+      });
+    });
+    socket.write(COMBINED_RESPONSE);
   });
 });
 

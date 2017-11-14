@@ -27,29 +27,32 @@ function ResponseHandler(clientSocket) {
   }
   
   function onData(rawData) {
-    buffer += rawData;
-    if (!isBufferComplete()) {
-      return;
-    }
     logger.debug('Got data on socket.', rawData);
-    var data = Parser.parse(buffer);
-    // reset buffer
-    buffer = "";
-  
-    switch (data.type) {
-      case "synchronousFailure":
-      case "synchronousSuccess":
-        var response = {
-          success: data.type === "synchronousSuccess",
-          data: data.data
-        };
-        notifier.emit("synchronousResponse", response);
-        break;
-      case "asynchronous":
-        notifier.emit("asynchronousResponse", data.data);
-        break;
-      default:
-        throw "Unknown response type.";
+    rawData.split("\r\n").forEach(function(line) {
+      buffer += (line + "\r\n");
+      if (!isBufferComplete()) {
+        return;
+      }
+      logger.debug('Got complete data.', buffer);
+      var data = Parser.parse(buffer);
+      // reset buffer
+      buffer = "";
+
+      switch (data.type) {
+        case "synchronousFailure":
+        case "synchronousSuccess":
+          var response = {
+            success: data.type === "synchronousSuccess",
+            data: data.data
+          };
+          notifier.emit("synchronousResponse", response);
+          break;
+        case "asynchronous":
+          notifier.emit("asynchronousResponse", data.data);
+          break;
+        default:
+          throw "Unknown response type.";
+      }
     }
   }
 

@@ -28,6 +28,16 @@ var FAILURE_RESPONSE_EVENT_PAYLOAD = {
   }
 };
 
+var SINGLE_LINE_SUCCESS_RESPONSE = "200 Success\r\n";
+var SINGLE_LINE_SUCCESS_RESPONSE_DATA = {
+  success: true,
+  data: {
+    code: 200,
+    text: "Success",
+    rawData: ""
+  }
+};
+
 var ASYNC_RESPONSE = "512 Async event:\r\nprotocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12\r\n\r\n";
 var ASYNC_RESPONSE_EVENT_PAYLOAD = {
   code: 512,
@@ -40,7 +50,7 @@ var ASYNC_RESPONSE_EVENT_PAYLOAD = {
   }
 };
 
-var COMBINED_RESPONSE = SUCCESS_RESPONSE + FAILURE_RESPONSE + ASYNC_RESPONSE;
+var COMBINED_RESPONSE = SUCCESS_RESPONSE + SINGLE_LINE_SUCCESS_RESPONSE + FAILURE_RESPONSE + ASYNC_RESPONSE;
 
 describe('ResponseHandler', function() {
 
@@ -89,10 +99,13 @@ describe('ResponseHandler', function() {
     responseHandler.getNotifier().once("synchronousResponse", function(response) {
       response.should.eql(SUCCESS_RESPONSE_EVENT_PAYLOAD);
       responseHandler.getNotifier().once("synchronousResponse", function(response) {
-        response.should.eql(FAILURE_RESPONSE_EVENT_PAYLOAD);
-        responseHandler.getNotifier().once("asynchronousResponse", function(response) {
-          response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
-          done();
+        response.should.eql(SINGLE_LINE_SUCCESS_RESPONSE_DATA);
+        responseHandler.getNotifier().once("synchronousResponse", function(response) {
+          response.should.eql(FAILURE_RESPONSE_EVENT_PAYLOAD);
+          responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+            response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
+            done();
+          });
         });
       });
     });

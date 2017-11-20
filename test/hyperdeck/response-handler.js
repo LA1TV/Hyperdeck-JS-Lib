@@ -51,6 +51,7 @@ var ASYNC_RESPONSE_EVENT_PAYLOAD = {
 };
 
 var COMBINED_RESPONSE = SUCCESS_RESPONSE + SINGLE_LINE_SUCCESS_RESPONSE + FAILURE_RESPONSE + ASYNC_RESPONSE;
+var COMBINED_RESPONSE_EXTRA_LINES = ASYNC_RESPONSE + '\r\n' + SUCCESS_RESPONSE;
 
 describe('ResponseHandler', function() {
 
@@ -110,6 +111,18 @@ describe('ResponseHandler', function() {
       });
     });
     socket.write(COMBINED_RESPONSE);
+  });
+
+  // see https://github.com/LA1TV/Hyperdeck-JS-Lib/issues/44
+  it('handles multiple responses arriving at the same time with extra lines inbetween', function(done) {
+    responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+      response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
+      responseHandler.getNotifier().once("synchronousResponse", function(response) {
+        response.should.eql(SUCCESS_RESPONSE_EVENT_PAYLOAD);
+        done();
+      });
+    });
+    socket.write(COMBINED_RESPONSE_EXTRA_LINES);
   });
 });
 

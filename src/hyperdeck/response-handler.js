@@ -29,6 +29,11 @@ function ResponseHandler(clientSocket) {
   function onData(rawData) {
     logger.debug('Got data on socket.', rawData);
     rawData.split("\r\n").forEach(function(line) {
+      if (buffer === '' && line.trim() === '') {
+        // handle empty lines before the data
+        // see https://github.com/LA1TV/Hyperdeck-JS-Lib/issues/44
+        return;
+      }
       buffer += (line + "\r\n");
       if (!isBufferComplete()) {
         return;

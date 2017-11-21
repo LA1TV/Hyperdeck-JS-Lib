@@ -1,3 +1,6 @@
+var FIRST_LINE_REGEX = /^([0-9]+) (.+?)(\:?)$/;
+var PARAMS_REGEX = /^(.*)\: (.*)$/;
+
 /**
  * Converts the data to a Object.
  * So the hyperdeck class can do things nicely with it.
@@ -12,7 +15,7 @@ function convertDataToObject(data) {
 
   var lines = data.split("\r\n"); //Splits the data on a new line.
   var firstLine = lines.shift(); // should contain {Response code} {Response text}
-  var firstLineMatches = /^([0-9]+) (.+?)(\:?)$/.exec(firstLine);
+  var firstLineMatches = FIRST_LINE_REGEX.exec(firstLine);
   var code = parseInt(firstLineMatches[1]);
   var text = firstLineMatches[2];
   dataObject.code = code;
@@ -30,7 +33,7 @@ function convertDataToObject(data) {
     var params = {};
     //Append the rest into an object for emitting.
     lines.forEach(function(line) {
-      var lineData = /^(.*)\: (.*)$/.exec(line);
+      var lineData = PARAMS_REGEX.exec(line);
       //First element in array is the whole string.
       if(lineData) {
         params[lineData[1]] = lineData[2];

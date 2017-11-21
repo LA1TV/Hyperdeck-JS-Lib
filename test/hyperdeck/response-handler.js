@@ -14,6 +14,17 @@ var SUCCESS_RESPONSE_EVENT_PAYLOAD = {
   }
 };
 
+// See format response
+var SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS = "200 Success with data but not params and no colon\r\nabc\r\n\r\n";
+var SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS_EVENT_PAYLOAD = {
+  success: true,
+  data: {
+    code: 200,
+    text: "Success with data but not params and no colon",
+    rawData: "abc"
+  }
+};
+
 var FAILURE_RESPONSE = "102 Failure:\r\nsomething: 123\r\nsomething else: test\r\n\r\n";
 var FAILURE_RESPONSE_EVENT_PAYLOAD = {
   success: false,
@@ -78,6 +89,14 @@ describe('ResponseHandler', function() {
       done();
     });
     socket.write(SUCCESS_RESPONSE);
+  });
+
+  it('emits a valid synchronous response event when receives a success response with data which is not params', function(done) {
+    responseHandler.getNotifier().once("synchronousResponse", function(response) {
+      response.should.eql(SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS_EVENT_PAYLOAD);
+      done();
+    });
+    socket.write(SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS);
   });
 
   it('emits a valid synchronous response event when receives a failure response', function(done) {

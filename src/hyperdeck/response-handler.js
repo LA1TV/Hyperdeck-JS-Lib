@@ -4,6 +4,8 @@ var Logger = require("../logger");
 
 var logger = Logger.get("hyperdeck.ResponseHandler");
 
+var ASYNC_RESPONSE_REGEX = /^(5[0-9]{2} )/;
+
 /**
  * Handles responses from they hyperdeck.
  */
@@ -11,6 +13,7 @@ function ResponseHandler(clientSocket) {
   var destroyed = false;
   var notifier = new events.EventEmitter();
   var buffer = "";
+  var nextResponseIsMultiline = false;
   
   function isBufferComplete() {
     var lines = buffer.split("\r\n");
@@ -19,6 +22,14 @@ function ResponseHandler(clientSocket) {
     // i.e. "1\r\n2\r\n" => ["1", "2", ""]
     lines.pop();
     if (lines.length === 1) {
+      var asyncResponse = ASYNC_RESPONSE_REGEX.exec(lines[0]);
+      if (!asyncResponse) {
+        if (nextResponseIsMultiline) {
+          logger.debug('Assuming buffer is not complete because nextResponseIsMultiline flag is set.');
+          nextResponseIsMultiline = false;
+          return false;
+        }
+      }
       // is it a single line response?
       return lines[0].indexOf(":") !== lines[0].length-1;
     } 
@@ -74,6 +85,13 @@ function ResponseHandler(clientSocket) {
     logger.debug('Destroying...');
     destroyed = true;
     clientSocket.removeListener('data', onData);
+  };
+
+  // Call this if you know that the next synchronous response will be multiline
+  // This is to handle cases like the format command where the response is not of params structure,
+  // and the first line doesn't end in ':', which means by default we would assume it is single line.
+  this.nextResponseIsMultiline = function() {
+    nextResponseIsMultiline = true;
   };
 }
 

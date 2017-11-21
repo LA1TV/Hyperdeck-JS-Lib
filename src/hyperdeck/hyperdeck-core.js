@@ -176,6 +176,10 @@ function HyperdeckCore(ip) {
       // make the request
       // either the "synchronousResponse" or "connectionLost" event should be
       // fired at some point in the future.
+      if (request.multiLineResponseOverride) {
+        logger.debug('Informing response handler that we are expecting multiple lines in the response.');
+        ResponseHandler.nextResponseIsMultiline();
+      }
       logger.info("Making request.", request);
       write(request+"\n");
     }
@@ -222,13 +226,24 @@ function HyperdeckCore(ip) {
    *   with the payload.
    * - If the hyperdeck looses connection or is not connected the promise will be
    *   rejected and the payload will be `null`.
+   * 
+   * `multiLineResponseOverride` should only be set if you know that the response will be
+   * multiple lines, but the first line would otherwise be interpreted as being a single line
+   * response.
+   * 
+   * E.g. the format command where the first line in the response does not end with a ':'
+   * but the following line contains the format token. Other commands with this issue are `uptime`
+   * and `commands`.
+   * 
    * @return The promise which will resolve/reject when a response has been received
    *         (or connection lost).
    */
-  this.makeRequest = function(requestToProcess) {
+  this.makeRequest = function(requestToProcess, multiLineResponseOverride) {
     if (!isValidRequest(requestToProcess)) {
       throw new Error("Invalid request.");
     }
+
+    requestToProcess.multiLineResponseOverride = !!multiLineResponseOverride;
 
     var completionPromise = new Promise(function(resolve, reject) {
       requestCompletionPromises.push({

@@ -96,7 +96,20 @@ describe('ResponseHandler', function() {
       response.should.eql(SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS_EVENT_PAYLOAD);
       done();
     });
+    responseHandler.nextResponseIsMultiline();
     socket.write(SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS);
+  });
+
+  it('emits a valid synchronous response event when receives a success response with data which is not params, after receiving an asynchronous response', function(done) {
+    responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+      response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
+      responseHandler.getNotifier().once("synchronousResponse", function(response) {
+        response.should.eql(SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS_EVENT_PAYLOAD);
+        done();
+      });
+    });
+    responseHandler.nextResponseIsMultiline();
+    socket.write(ASYNC_RESPONSE + SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS);
   });
 
   it('emits a valid synchronous response event when receives a failure response', function(done) {

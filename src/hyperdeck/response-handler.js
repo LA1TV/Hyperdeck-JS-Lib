@@ -4,6 +4,8 @@ var Logger = require("../logger");
 
 var logger = Logger.get("hyperdeck.ResponseHandler");
 
+var ASYNC_RESPONSE_REGEX = /^(5[0-9]{2} )/;
+
 /**
  * Handles responses from they hyperdeck.
  */
@@ -88,6 +90,13 @@ function ResponseHandler(clientSocket) {
     logger.debug('Destroying...');
     destroyed = true;
     clientSocket.removeListener('data', onData);
+  };
+
+  // Call this if you know that the next synchronous response will be multiline
+  // This is to handle cases like the format command where the response is not of params structure,
+  // and the first line doesn't end in ':', which means by default we would assume it is single line.
+  this.nextResponseIsMultiline = function() {
+    nextResponseIsMultiline = true;
   };
 }
 

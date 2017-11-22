@@ -1,10 +1,10 @@
 var ResponseHandler = require('../../src/hyperdeck/response-handler');
 
-var SUCCESS_RESPONSE = "200 Success with data:\r\nsomething: 123\r\nsomething else: test\r\n\r\n";
+var SUCCESS_RESPONSE = "201 Success with data:\r\nsomething: 123\r\nsomething else: test\r\n\r\n";
 var SUCCESS_RESPONSE_EVENT_PAYLOAD = {
   success: true,
   data: {
-    code: 200,
+    code: 201,
     text: "Success with data",
     rawData: "something: 123\r\nsomething else: test",
     params: {
@@ -14,38 +14,23 @@ var SUCCESS_RESPONSE_EVENT_PAYLOAD = {
   }
 };
 
-// See format response
-var SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS = "200 Success with data but not params and no colon\r\nabc\r\n\r\n";
-var SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS_EVENT_PAYLOAD = {
-  success: true,
-  data: {
-    code: 200,
-    text: "Success with data but not params and no colon",
-    rawData: "abc"
-  }
-};
-
-var FAILURE_RESPONSE = "102 Failure:\r\nsomething: 123\r\nsomething else: test\r\n\r\n";
+// such case does not exists
+// var FAILURE_RESPONSE = "102 Failure:\r\nsomething: 123\r\nsomething else: test\r\n\r\n";
+var FAILURE_RESPONSE = "102 Failure\r\n";
 var FAILURE_RESPONSE_EVENT_PAYLOAD = {
   success: false,
   data: {
     code: 102,
     text: "Failure",
-    rawData: "something: 123\r\nsomething else: test",
-    params: {
-      something: "123",
-      "something else": "test"
-    }
   }
 };
 
-var SINGLE_LINE_SUCCESS_RESPONSE = "200 Success\r\n";
+var SINGLE_LINE_SUCCESS_RESPONSE = "200 ok\r\n";
 var SINGLE_LINE_SUCCESS_RESPONSE_DATA = {
   success: true,
   data: {
     code: 200,
-    text: "Success",
-    rawData: ""
+    text: "ok",
   }
 };
 

@@ -14,7 +14,7 @@ var ASYNCHRONOUS_EVENT_DATA = {
   }
 };
 var SUCCESS_DATA = {
-  code: 200,
+  code: 201,
   text: "Success with data",
   params: {
     something: "123",

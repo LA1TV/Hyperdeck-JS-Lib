@@ -1,48 +1,48 @@
 var ResponseHandler = require('../../src/hyperdeck/response-handler');
 
-var SUCCESS_RESPONSE = "201 Success with data:\r\nsomething: 123\r\nsomething else: test\r\n\r\n";
+var SUCCESS_RESPONSE = '201 Success with data:\r\nsomething: 123\r\nsomething else: test\r\n\r\n';
 var SUCCESS_RESPONSE_EVENT_PAYLOAD = {
   success: true,
   data: {
     code: 201,
-    text: "Success with data",
-    rawData: "something: 123\r\nsomething else: test",
+    text: 'Success with data',
+    rawData: 'something: 123\r\nsomething else: test',
     params: {
-      something: "123",
-      "something else": "test"
+      something: '123',
+      'something else': 'test'
     }
   }
 };
 
 // See format response
-var SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS = "201 Success with data but not params and no colon\r\nabc\r\n\r\n";
+var SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS = '201 Success with data but not params and no colon\r\nabc\r\n\r\n';
 var SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS_EVENT_PAYLOAD = {
   success: true,
   data: {
     code: 201,
-    text: "Success with data but not params and no colon",
-    rawData: "abc"
+    text: 'Success with data but not params and no colon',
+    rawData: 'abc'
   }
 };
 
-var SINGLE_LINE_SUCCESS_RESPONSE = "200 ok\r\n";
+var SINGLE_LINE_SUCCESS_RESPONSE = '200 ok\r\n';
 var SINGLE_LINE_SUCCESS_RESPONSE_DATA = {
   success: true,
   data: {
     code: 200,
-    text: "ok"
+    text: 'ok'
   }
 };
 
-var ASYNC_RESPONSE = "512 Async event:\r\nprotocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12\r\n\r\n";
+var ASYNC_RESPONSE = '512 Async event:\r\nprotocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12\r\n\r\n';
 var ASYNC_RESPONSE_EVENT_PAYLOAD = {
   code: 512,
-  text: "Async event",
-  rawData: "protocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12",
+  text: 'Async event',
+  rawData: 'protocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12',
   params: {
-    "protocol version": "9.5",
-    model: "xyz",
-    time: "12:40:12"
+    'protocol version': '9.5',
+    model: 'xyz',
+    time: '12:40:12'
   }
 };
 
@@ -65,11 +65,11 @@ describe('ResponseHandler', function() {
   });
 
   it('can be built', function() {
-    responseHandler.should.be.ok;
+    responseHandler.should.be.ok();
   });
 
   it('emits a valid synchronous response event when receives a success response', function(done) {
-    responseHandler.getNotifier().once("synchronousResponse", function(response) {
+    responseHandler.getNotifier().once('synchronousResponse', function(response) {
       response.should.eql(SUCCESS_RESPONSE_EVENT_PAYLOAD);
       done();
     });
@@ -77,7 +77,7 @@ describe('ResponseHandler', function() {
   });
 
   it('emits a valid synchronous response event when receives a success response with data which is not params', function(done) {
-    responseHandler.getNotifier().once("synchronousResponse", function(response) {
+    responseHandler.getNotifier().once('synchronousResponse', function(response) {
       response.should.eql(SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS_EVENT_PAYLOAD);
       done();
     });
@@ -85,9 +85,9 @@ describe('ResponseHandler', function() {
   });
 
   it('emits a valid synchronous response event when receives a success response with data which is not params, after receiving an asynchronous response', function(done) {
-    responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+    responseHandler.getNotifier().once('asynchronousResponse', function(response) {
       response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
-      responseHandler.getNotifier().once("synchronousResponse", function(response) {
+      responseHandler.getNotifier().once('synchronousResponse', function(response) {
         response.should.eql(SUCCESS_RESPONSE_WITH_DATA_NO_BUT_NOT_PARAMS_EVENT_PAYLOAD);
         done();
       });
@@ -96,7 +96,7 @@ describe('ResponseHandler', function() {
   });
 
   it('emits a valid asynchronous response event when receives an aync response', function(done) {
-    responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+    responseHandler.getNotifier().once('asynchronousResponse', function(response) {
       response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
       done();
     });
@@ -104,11 +104,11 @@ describe('ResponseHandler', function() {
   });
   
   it('handles multiple responses arriving at the same time', function(done) {
-    responseHandler.getNotifier().once("synchronousResponse", function(response) {
+    responseHandler.getNotifier().once('synchronousResponse', function(response) {
       response.should.eql(SUCCESS_RESPONSE_EVENT_PAYLOAD);
-      responseHandler.getNotifier().once("synchronousResponse", function(response) {
+      responseHandler.getNotifier().once('synchronousResponse', function(response) {
         response.should.eql(SINGLE_LINE_SUCCESS_RESPONSE_DATA);
-        responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+        responseHandler.getNotifier().once('asynchronousResponse', function(response) {
           response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
           done();
         });
@@ -119,9 +119,9 @@ describe('ResponseHandler', function() {
 
   // see https://github.com/LA1TV/Hyperdeck-JS-Lib/issues/44
   it('handles multiple responses arriving at the same time with extra lines inbetween', function(done) {
-    responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+    responseHandler.getNotifier().once('asynchronousResponse', function(response) {
       response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
-      responseHandler.getNotifier().once("synchronousResponse", function(response) {
+      responseHandler.getNotifier().once('synchronousResponse', function(response) {
         response.should.eql(SUCCESS_RESPONSE_EVENT_PAYLOAD);
         done();
       });
@@ -130,11 +130,11 @@ describe('ResponseHandler', function() {
   });
 
   it('handles multiple responses arriving character by character', function(done) {
-    responseHandler.getNotifier().once("synchronousResponse", function(response) {
+    responseHandler.getNotifier().once('synchronousResponse', function(response) {
       response.should.eql(SUCCESS_RESPONSE_EVENT_PAYLOAD);
-      responseHandler.getNotifier().once("synchronousResponse", function(response) {
+      responseHandler.getNotifier().once('synchronousResponse', function(response) {
         response.should.eql(SINGLE_LINE_SUCCESS_RESPONSE_DATA);
-        responseHandler.getNotifier().once("asynchronousResponse", function(response) {
+        responseHandler.getNotifier().once('asynchronousResponse', function(response) {
           response.should.eql(ASYNC_RESPONSE_EVENT_PAYLOAD);
           done();
         });
@@ -163,10 +163,10 @@ MockSocket.prototype.write = function(data) {
 };
 
 MockSocket.prototype.on = function(evt, listener) {
-  if (evt === "data") {
+  if (evt === 'data') {
     this._dataListeners.push(listener);
   }
   else {
-    throw new Error("MockSocket doesn't support this!");
+    throw new Error('MockSocket doesn\'t support this!');
   }
 };

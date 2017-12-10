@@ -3,9 +3,9 @@ var ResponseHandler = require('./response-handler');
 var Promise = require('promise');
 var net = require('net');
 var events = require('events');
-var Logger = require("../logger");
+var Logger = require('../logger');
 
-var logger = Logger.get("hyperdeck.HyperdeckCore");
+var logger = Logger.get('hyperdeck.HyperdeckCore');
 
 /**
  * Represents a Hyperdeck.
@@ -19,60 +19,60 @@ function HyperdeckCore(ip) {
 
   function onConnectionStateChange(state) {
     if (!state.connected) {
-      publicNotifier.emit("connectionLost");
+      publicNotifier.emit('connectionLost');
     }
   }
 
   function handleConnectionResponse() {
     function removeListeners() {
-      responseHandler.getNotifier().removeListener("asynchronousResponse", handler);
-      responseHandler.getNotifier().removeListener("connectionStateChange", handleConnectionLoss);
+      responseHandler.getNotifier().removeListener('asynchronousResponse', handler);
+      responseHandler.getNotifier().removeListener('connectionStateChange', handleConnectionLoss);
     }
 
     function handler(response) {
-      if (response.code === 500 && response.text === "connection info") {
+      if (response.code === 500 && response.text === 'connection info') {
         removeListeners();
         connected = true;
         connecting = false;
         registerAsyncResponseListener();
-        notifier.emit("connectionStateChange", {connected: true});
+        notifier.emit('connectionStateChange', {connected: true});
         pingTimerId = setInterval(ping, 10000);
         // a request might have been queued whilst the connection
         // was being made
         performNextRequest();
       }
-      else if (response.code === 120 && response.text === "connection rejected") {
+      else if (response.code === 120 && response.text === 'connection rejected') {
         removeListeners();
         // close the socket, which should then result in onConnectionLost() being called
         client.destroy();
       }
       else {
-        throw new Error("Was expecting an async response stating whether the connection was succesful.");
+        throw new Error('Was expecting an async response stating whether the connection was succesful.');
       }
     }
 
     function handleConnectionLoss(state) {
       if (state.connected) {
-        throw new Error("Invalid connection state.");
+        throw new Error('Invalid connection state.');
       }
       removeListeners();
     }
-    responseHandler.getNotifier().on("asynchronousResponse", handler);
-    responseHandler.getNotifier().on("connectionStateChange", handleConnectionLoss);
+    responseHandler.getNotifier().on('asynchronousResponse', handler);
+    responseHandler.getNotifier().on('connectionStateChange', handleConnectionLoss);
   }
 
   function registerAsyncResponseListener() {
-    responseHandler.getNotifier().on("asynchronousResponse", function(data) {
+    responseHandler.getNotifier().on('asynchronousResponse', function(data) {
       // the developer will listen on the notifier for asynchronous events
       // fired from the hyperdeck
-      publicNotifier.emit("asynchronousEvent", data);
+      publicNotifier.emit('asynchronousEvent', data);
     });
   }
 
   // or the connection fails to be made
   function onConnectionLost() {
     if (!socketConnected && !connecting) {
-      throw "Must be connected (or connecting) in order to loose the connection!";
+      throw 'Must be connected (or connecting) in order to loose the connection!';
     }
     connecting = false;
     connected = false;
@@ -81,23 +81,23 @@ function HyperdeckCore(ip) {
       clearTimeout(pingTimerId);
       pingTimerId = null;
     }
-    notifier.emit("connectionStateChange", {connected: false});
+    notifier.emit('connectionStateChange', {connected: false});
     performNextRequest();
   }
 
   function isValidRequest(request) {
     // requests must not contain new lines
-    return request.indexOf("\r") === -1 && request.indexOf("\n") === -1;
+    return request.indexOf('\r') === -1 && request.indexOf('\n') === -1;
   }
 
   // write to the socket
   function write(data) {
-    logger.debug("Writing to socket.", data);
+    logger.debug('Writing to socket.', data);
     client.write(data);
   }
 
   function ping() {
-    self.makeRequest("ping");
+    self.makeRequest('ping');
   }
 
   /**
@@ -125,19 +125,19 @@ function HyperdeckCore(ip) {
 
     function registerListeners() {
       listenersRegistered = true;
-      responseHandler.getNotifier().on("synchronousResponse", handleResponse);
-      notifier.on("connectionStateChange", handleConnectionLoss);
+      responseHandler.getNotifier().on('synchronousResponse', handleResponse);
+      notifier.on('connectionStateChange', handleConnectionLoss);
     }
 
     function removeListeners() {
       if (listenersRegistered) {
-        responseHandler.getNotifier().removeListener("synchronousResponse", handleResponse);
-        notifier.removeListener("connectionStateChange", handleConnectionLoss);
+        responseHandler.getNotifier().removeListener('synchronousResponse', handleResponse);
+        notifier.removeListener('connectionStateChange', handleConnectionLoss);
       }
     }
 
     function handleResponse(response) {
-      logger.debug("Got response. Resolving provided promise with response.");
+      logger.debug('Got response. Resolving provided promise with response.');
       removeListeners();
       if (response.success) {
         // response has a success status code
@@ -152,13 +152,13 @@ function HyperdeckCore(ip) {
 
     function handleConnectionLoss(state) {
       if (state.connected) {
-        throw new Error("Invalid connection state.");
+        throw new Error('Invalid connection state.');
       }
       onConnectionLost();
     }
 
     function onConnectionLost() {
-      logger.debug("Connection lost. Rejecting provided promise to signify failure.");
+      logger.debug('Connection lost. Rejecting provided promise to signify failure.');
       removeListeners();
       // null to signify connection loss
       requestCompletionPromise.reject(null);
@@ -168,16 +168,16 @@ function HyperdeckCore(ip) {
     if (!connected) {
       // connection has been lost
       // don't even attempt the request
-      logger.debug("Not attempting request because connection lost.");
+      logger.debug('Not attempting request because connection lost.');
       onConnectionLost();
     }
     else {
       registerListeners();
       // make the request
-      // either the "synchronousResponse" or "connectionLost" event should be
+      // either the 'synchronousResponse' or 'connectionLost' event should be
       // fired at some point in the future.
-      logger.info("Making request.", request);
-      write(request+"\n");
+      logger.info('Making request.', request);
+      write(request+'\n');
     }
   }
 
@@ -194,7 +194,7 @@ function HyperdeckCore(ip) {
   // hyperdeck connection completed
   var connected = false;
   var pingTimerId = null;
-  notifier.on("connectionStateChange", onConnectionStateChange);
+  notifier.on('connectionStateChange', onConnectionStateChange);
 
   var client = net.connect({
     host: ip,
@@ -205,13 +205,13 @@ function HyperdeckCore(ip) {
     // wait for the hyperdeck to confirm it's ready and connected.
     handleConnectionResponse();
   });
-  client.setEncoding("utf8");
-  client.on("error", function(e) {
-    logger.warn("Socket error.", e);
+  client.setEncoding('utf8');
+  client.on('error', function(e) {
+    logger.warn('Socket error.', e);
   });
   // when the connection closes handle this
   // this should also happen if the connection fails at some point
-  client.on("close", onConnectionLost);
+  client.on('close', onConnectionLost);
   var responseHandler = new ResponseHandler(client);
 
   /**
@@ -227,7 +227,7 @@ function HyperdeckCore(ip) {
    */
   this.makeRequest = function(requestToProcess) {
     if (!isValidRequest(requestToProcess)) {
-      throw new Error("Invalid request.");
+      throw new Error('Invalid request.');
     }
 
     var completionPromise = new Promise(function(resolve, reject) {
@@ -238,7 +238,7 @@ function HyperdeckCore(ip) {
     });
 
     pendingRequests.push(requestToProcess);
-    logger.info("Queueing request.", requestToProcess);
+    logger.info('Queueing request.', requestToProcess);
     performNextRequest();
     return completionPromise;
   };
@@ -256,7 +256,7 @@ function HyperdeckCore(ip) {
         reject();
       }
       else {
-        notifier.once("connectionStateChange", function(state) {
+        notifier.once('connectionStateChange', function(state) {
           if (state.connected) {
             resolve();
           }
@@ -278,9 +278,9 @@ function HyperdeckCore(ip) {
 
   /**
   * Get the notifier.
-  * Events with id "asynchronousEvent" will be emitted from this for asynchronous events
+  * Events with id 'asynchronousEvent' will be emitted from this for asynchronous events
   * from the hyperdeck.
-  * "connectionLost" is emitted if the hyperdeck connection is lost (or fails to connect)
+  * 'connectionLost' is emitted if the hyperdeck connection is lost (or fails to connect)
   */
   this.getNotifier = function() {
      return publicNotifier;

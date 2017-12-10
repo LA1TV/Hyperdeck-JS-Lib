@@ -1,4 +1,4 @@
-var JsLogger = require("js-logger");
+var JsLogger = require('js-logger');
 
 JsLogger.useDefaults({
   formatter: function(messages, context) {

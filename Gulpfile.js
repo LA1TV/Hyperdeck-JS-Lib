@@ -3,7 +3,7 @@ var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 
 gulp.task('lint', function() {
-  return gulp.src(['src/*.js', 'src/**/*.js'])
+  return gulp.src(['src/*.js', 'src/**/*.js', 'test/*.js', 'test/**/*.js'])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(jshint.reporter('fail'));

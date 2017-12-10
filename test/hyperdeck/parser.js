@@ -20,67 +20,54 @@ var ASYNC_RESPONSE = [
 var INVALID_RESPONSE = [ 'something invalid' ];
 
 var SUCCESS_RESPONSE_DATA = {
-    type: "synchronousSuccess",
+    type: 'synchronousSuccess',
     data: {
         code: 200,
-        text: "ok"
+        text: 'ok'
     }
 };
 
 var SUCCESS_PARAMS_RESPONSE_DATA = {
-    type: "synchronousSuccess",
+    type: 'synchronousSuccess',
     data: {
         code: 201,
-        text: "Success with data",
+        text: 'Success with data',
         rawData: 'something: 123\r\nsomething else: test',
         params: {
-            something: "123",
-            "something else": "test"
+            something: '123',
+            'something else': 'test'
         }
     }
 };
 
 var SUCCESS_UNPARSEABLE_PARAMS_RESPONSE_DATA = {
-    type: "synchronousSuccess",
+    type: 'synchronousSuccess',
     data: {
         code: 201,
-        text: "Success with data",
+        text: 'Success with data',
         rawData: '<something-unexpected />',
         params: {}
     }
 };
 
 var FAILURE_RESPONSE_DATA = {
-    type: "synchronousFailure",
+    type: 'synchronousFailure',
     data: {
         code: 102,
-        text: "Failure"
-    }
-};
-
-var FAILURE_PARAMS_RESPONSE_DATA = {
-    type: "synchronousFailure",
-    data: {
-        code: 102,
-        text: "Failure",
-        rawData: "something: 123\r\nsomething else: test",
-        params:  {
-            something: "123",
-            "something else": "test"
-        }
+        text: 'Failure'
     }
 };
 
 var ASYNC_RESPONSE_DATA = {
-    type: "asynchronous",
+    type: 'asynchronous',
     data: {
         code: 512,
-        text: "Async event",
-        rawData: "protocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12",
+        text: 'Async event',
+        rawData: 'protocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12',
         params: {
-            "protocol version": "9.5",
-            model: "xyz",
-            time: "12:40:12"
+            'protocol version': '9.5',
+            model: 'xyz',
+            time: '12:40:12'
         }
     }
 };

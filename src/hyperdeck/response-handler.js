@@ -1,8 +1,8 @@
 var events = require('events');
 var Parser = require('./parser');
-var Logger = require("../logger");
+var Logger = require('../logger');
 
-var logger = Logger.get("hyperdeck.ResponseHandler");
+var logger = Logger.get('hyperdeck.ResponseHandler');
 
 var SINGLE_LINE_REGEX = /^(?:1\d{2}|200) /;
 
@@ -50,19 +50,19 @@ function ResponseHandler(clientSocket) {
           try {
             var data = Parser.parse(bufferClone);
             switch (data.type) {
-              case "synchronousFailure":
-              case "synchronousSuccess":
+              case 'synchronousFailure':
+              case 'synchronousSuccess':
                 var response = {
-                  success: data.type === "synchronousSuccess",
+                  success: data.type === 'synchronousSuccess',
                   data: data.data
                 };
-                notifier.emit("synchronousResponse", response);
+                notifier.emit('synchronousResponse', response);
                 break;
-              case "asynchronous":
-                notifier.emit("asynchronousResponse", data.data);
+              case 'asynchronous':
+                notifier.emit('asynchronousResponse', data.data);
                 break;
               default:
-                throw new Error("Unknown response type.");
+                throw new Error('Unknown response type.');
             }
           } catch(e) {
             // defer exception so that we don't stop processing response

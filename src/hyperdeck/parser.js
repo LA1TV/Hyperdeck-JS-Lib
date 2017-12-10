@@ -4,7 +4,7 @@ var PARAMS_REGEX = /^(.*)\: (.*)$/;
 /**
  * Converts the data to a Object.
  * So the hyperdeck class can do things nicely with it.
- * @return dataObject, The data in a nice object. This will contain "code", "text" and "params" keys,
+ * @return dataObject, The data in a nice object. This will contain 'code', 'text' and 'params' keys,
  *                     (if there are parameters) where params is an object.
  **/
 function convertDataToObject(lines) {
@@ -22,10 +22,10 @@ function convertDataToObject(lines) {
   
   if (lines.length) {
     // provide the raw data in addition to attempting to parse the response into params
-    dataObject.rawData = lines.join("\r\n");
+    dataObject.rawData = lines.join('\r\n');
   }
   
-  if (firstLineMatches[3] === ":") {
+  if (firstLineMatches[3] === ':') {
     // the response should have params on the next lines
     // (although sometimes it doesn't because of the responses (e.g 'commands'), do not return
     // the usual format, and in this case params will likely remain as {})
@@ -48,21 +48,21 @@ function convertDataToObject(lines) {
  */
  function failureResponseCode(lines) {
    return {
-     type: "synchronousFailure",
+     type: 'synchronousFailure',
      data: convertDataToObject(lines)
    };
  }
 
  function successResponseCode(lines) {
    return {
-     type: "synchronousSuccess",
+     type: 'synchronousSuccess',
      data: convertDataToObject(lines)
    };
  }
 
  function asynchornousResponseCode(lines) {
    return {
-     type: "asynchronous",
+     type: 'asynchronous',
      data: convertDataToObject(lines)
    };
  }
@@ -72,14 +72,14 @@ var Parser = {
   parse: function(lines) {
     // pass into the switch/case to decide which function to use.
     switch (lines[0].charAt(0)){
-      case "1":
+      case '1':
         return failureResponseCode(lines);
-      case "2":
+      case '2':
         return successResponseCode(lines);
-      case "5":
+      case '5':
         return asynchornousResponseCode(lines);
       default:
-        throw new Error("Invalid payload. Unknown response code.");
+        throw new Error('Invalid payload. Unknown response code.');
     }
   }
 };

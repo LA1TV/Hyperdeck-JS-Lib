@@ -1,25 +1,36 @@
 var Parser = require('../../src/hyperdeck/parser');
 
-var SUCCESS_RESPONSE = "200 Success";
-var SUCCESS_RESPONSE_WITH_PARAMS = "200 Success with data:\r\nsomething: 123\r\nsomething else: test\r\n\r\n";
-var SUCCESS_RESPONSE_WITH_UNPARSEABLE_PARAMS = "200 Success with data:\r\n<something-unexpected />\r\n\r\n";
-var FAILURE_RESPONSE = "102 Failure";
-var FAILURE_RESPONSE_WITH_PARAMS = "102 Failure:\r\nsomething: 123\r\nsomething else: test\r\n\r\n";
-var ASYNC_RESPONSE = "512 Async event:\r\nprotocol version: 9.5\r\nmodel: xyz\r\ntime: 12:40:12\r\n\r\n";
-var INVALID_RESPONSE = "something invalid";
+var SUCCESS_RESPONSE = [ '200 ok' ];
+var SUCCESS_RESPONSE_WITH_PARAMS = [
+    '201 Success with data:',
+    'something: 123',
+    'something else: test'
+];
+var SUCCESS_RESPONSE_WITH_UNPARSEABLE_PARAMS = [
+    '201 Success with data:',
+    '<something-unexpected />'
+];
+var FAILURE_RESPONSE = [ '102 Failure' ];
+var ASYNC_RESPONSE = [
+    '512 Async event:',
+    'protocol version: 9.5',
+    'model: xyz',
+    'time: 12:40:12'
+];
+var INVALID_RESPONSE = [ 'something invalid' ];
 
 var SUCCESS_RESPONSE_DATA = {
     type: "synchronousSuccess",
     data: {
         code: 200,
-        text: "Success"
+        text: "ok"
     }
 };
 
 var SUCCESS_PARAMS_RESPONSE_DATA = {
     type: "synchronousSuccess",
     data: {
-        code: 200,
+        code: 201,
         text: "Success with data",
         rawData: 'something: 123\r\nsomething else: test',
         params: {
@@ -32,7 +43,7 @@ var SUCCESS_PARAMS_RESPONSE_DATA = {
 var SUCCESS_UNPARSEABLE_PARAMS_RESPONSE_DATA = {
     type: "synchronousSuccess",
     data: {
-        code: 200,
+        code: 201,
         text: "Success with data",
         rawData: '<something-unexpected />',
         params: {}
@@ -86,10 +97,6 @@ describe('Parser', function() {
 
   it('should handle a response string with a failure status code', function() {
     Parser.parse(FAILURE_RESPONSE).should.eql(FAILURE_RESPONSE_DATA);
-  });
-
-  it('should handle a response string with a failure status code and params', function() {
-    Parser.parse(FAILURE_RESPONSE_WITH_PARAMS).should.eql(FAILURE_PARAMS_RESPONSE_DATA);
   });
 
   it('should handle a response string with an async status code', function() {

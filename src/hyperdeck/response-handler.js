@@ -44,7 +44,7 @@ function ResponseHandler(clientSocket) {
             buffer.pop();
           }
 
-          logger.debug('Got complete data.\n', buffer);
+          logger.debug('Got complete data.\n', buffer.join('\n'));
           // reset buffer here and use clone (in case exception happens below)
           var bufferClone = buffer.splice(0);
           try {

@@ -12,10 +12,34 @@ var logger = Logger.get('hyperdeck.HyperdeckCore');
  * Allows you to make requests to the hyperdeck and get its parsed responses.
  * This chains the requests so only one is sent at a time.
  * You can also listen for asynchronous events sent from the hyperdeck.
- * @param ip, The IP address of the hyperdeck.
+ * @param config hyperdeck configuration
+ *               config = 'ip address string[string]'
+ *               or
+ *               config = {
+ *                 ip: 'ip address string[string]',
+ *                 [ pingInterval: ping interval in miliseconds[int][default = 10000] ],
+ *                 [ timeout: inactivity timeout in miliseconds[int][default = 3000] ]
+ *               }
  **/
-function HyperdeckCore(ip) {
+function HyperdeckCore(config) {
+  if (config === null) {
+    throw 'Invalid Configuration, please refer to documentations.';
+  }
+
   var self = this;
+  var cfg = {};
+  if (typeof config === 'string') {
+    cfg.ip = config;
+  } else {
+    cfg = config;
+  }
+  // Defaults 
+  if (cfg.pingInterval === undefined) {
+    cfg.pingInterval = 10000;
+  }
+  if (cfg.timeout === undefined) {
+    cfg.timeout = 3000;
+  }
 
   function onConnectionStateChange(state) {
     if (!state.connected) {
@@ -36,7 +60,9 @@ function HyperdeckCore(ip) {
         connecting = false;
         registerAsyncResponseListener();
         notifier.emit('connectionStateChange', {connected: true});
-        pingTimerId = setInterval(ping, 10000);
+        if (cfg.pingInterval > 0) {
+          pingTimerId = setInterval(ping, cfg.pingInterval);
+        }
         // a request might have been queued whilst the connection
         // was being made
         performNextRequest();
@@ -197,7 +223,7 @@ function HyperdeckCore(ip) {
   notifier.on('connectionStateChange', onConnectionStateChange);
 
   var client = net.connect({
-    host: ip,
+    host: cfg.ip,
     port: 9993
   }, function() {
     logger.info('Socket connected.');
@@ -206,7 +232,12 @@ function HyperdeckCore(ip) {
     handleConnectionResponse();
   });
   client.setEncoding('utf8');
-  client.on('error', function(e) {
+
+  // https://nodejs.org/api/net.html#net_socket_settimeout_timeout_callback
+  client.setTimeout(cfg.timeout);
+  logger.info('setTimeout ' + cfg.timeout);
+
+  client.on('error', function (e) {
     logger.warn('Socket error.', e);
   });
   // when the connection closes handle this

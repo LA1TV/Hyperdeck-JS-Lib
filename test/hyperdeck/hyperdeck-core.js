@@ -171,9 +171,6 @@ function getNetStub() {
           onCloseListeners.forEach(function(listener) {
             listener();
           });
-        },
-        setTimeout : function() {
-          //
         }
       };
     }

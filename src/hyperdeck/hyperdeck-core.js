@@ -21,9 +21,22 @@ var logger = Logger.get('hyperdeck.HyperdeckCore');
  *               }
  **/
 function HyperdeckCore(config) {
-  if (config === undefined ||
-    config === null ||
-    ((typeof config) !== 'string' && config.hasOwnProperty('ip') === false)) {
+
+  /**
+   * validate configuration
+   * 
+   * @param {*} config 
+   */
+  function isConfigValid(config) {
+    return (
+      config !== undefined &&
+      config !== null &&
+      (typeof config === 'string' || !!config.ip)
+    );
+  }
+
+  // check for valid configuration
+  if (!isConfigValid(config)) {
     throw new Error('Invalid Configuration, please refer to documentations.');
   }
 

@@ -12,10 +12,40 @@ var logger = Logger.get('hyperdeck.HyperdeckCore');
  * Allows you to make requests to the hyperdeck and get its parsed responses.
  * This chains the requests so only one is sent at a time.
  * You can also listen for asynchronous events sent from the hyperdeck.
- * @param ip, The IP address of the hyperdeck.
+ * @param config hyperdeck configuration
+ *               config = 'ip address string[string]'
+ *               or
+ *               config = {
+ *                 ip: 'ip address string[string]',
+ *                 [ pingInterval: ping interval in miliseconds[int][default = 10000] ]
+ *               }
  **/
-function HyperdeckCore(ip) {
+function HyperdeckCore(config) {
+
+  /**
+   * validate configuration
+   * 
+   * @param {*} config 
+   */
+  function isConfigValid(config) {
+    return (
+      config !== undefined &&
+      config !== null &&
+      (typeof config === 'string' || !!config.ip)
+    );
+  }
+
+  // check for valid configuration
+  if (!isConfigValid(config)) {
+    throw new Error('Invalid Configuration, please refer to documentations.');
+  }
+
   var self = this;
+
+  if (typeof config === 'string') {
+    config = { ip: config };
+  }
+  config = Object.assign({ pingInterval: 10000 }, config);
 
   function onConnectionStateChange(state) {
     if (!state.connected) {
@@ -36,7 +66,9 @@ function HyperdeckCore(ip) {
         connecting = false;
         registerAsyncResponseListener();
         notifier.emit('connectionStateChange', {connected: true});
-        pingTimerId = setInterval(ping, 10000);
+        if (config.pingInterval > 0) {
+          pingTimerId = setInterval(ping, config.pingInterval);
+        }
         // a request might have been queued whilst the connection
         // was being made
         performNextRequest();
@@ -197,7 +229,7 @@ function HyperdeckCore(ip) {
   notifier.on('connectionStateChange', onConnectionStateChange);
 
   var client = net.connect({
-    host: ip,
+    host: config.ip,
     port: 9993
   }, function() {
     logger.info('Socket connected.');
@@ -206,7 +238,8 @@ function HyperdeckCore(ip) {
     handleConnectionResponse();
   });
   client.setEncoding('utf8');
-  client.on('error', function(e) {
+
+  client.on('error', function (e) {
     logger.warn('Socket error.', e);
   });
   // when the connection closes handle this

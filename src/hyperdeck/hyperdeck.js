@@ -62,13 +62,13 @@ var Hyperdeck = function(config) {
   };
 
   this.format = function(format){
-    return this.makeRequest('format: prepare: ' + format).then((response)=>{
+    return this.makeRequest('format: prepare: ' + format).then(function(response){
       if (response.code !== 216 || response.text !== 'format ready' || !response.rawData) {
         throw new Error('Unexpected response.');
       }
       var token = response.rawData;
       return this.makeRequest('format: confirm: ' + token);
-    });
+    }.bind(this));
   };
 };
 

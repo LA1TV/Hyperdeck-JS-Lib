@@ -39,13 +39,10 @@ var Hyperdeck = function(config) {
   };
 
   this.slotInfo = function (id) {
-    if (id === 0 || id === 1 || id === 2){ //TO DO find if it's 0-1 or 1-2
+    if (typeof id === 'number') {
       return this.makeRequest('slot info: slot id: ' + id);
     } else{
-      if (!id){
-        return this.makeRequest('slot info');
-      }
-      throw new Error('Slot ID Value out of range');
+      return this.makeRequest('slot info');
     }
   };
 

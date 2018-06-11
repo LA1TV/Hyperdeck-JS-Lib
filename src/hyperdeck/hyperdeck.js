@@ -1,10 +1,10 @@
 var util = require('util');
 var HyperdeckCore = require('./hyperdeck-core.js');
 
-var Hyperdeck = function(ip) {
+var Hyperdeck = function(config) {
 
   // call constructor of HyperdeckCore
-  HyperdeckCore.call(this, ip);
+  HyperdeckCore.call(this, config);
 
   this.makeRequest('notify: remote: true');
   this.makeRequest('notify: transport: true');
@@ -68,7 +68,7 @@ var Hyperdeck = function(ip) {
       }
       var token = response.rawData;
       return this.makeRequest('format: confirm: ' + token);
-    });
+    }.bind(this));
   };
 };
 

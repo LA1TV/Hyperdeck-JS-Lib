@@ -68,7 +68,7 @@ var Hyperdeck = function(config) {
       }
       var token = response.rawData;
       return this.makeRequest('format: confirm: ' + token);
-    });
+    }.bind(this));
   };
 };
 

@@ -54,6 +54,14 @@ var Hyperdeck = function(config) {
     return this.makeRequest('clips get');
   };
 
+  this.nextClip = function() { 
+    return this.makeRequest('goto: clip id: +1'); 
+  };
+
+  this.prevClip = function() { 
+    return this.makeRequest('goto: clip id: -1'); 
+  };
+
   this.slotSelect = function(id){
     return this.makeRequest('slot select: slot id: ' + id);
   };

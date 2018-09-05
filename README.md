@@ -68,6 +68,8 @@ hyperdeck.slotSelect(2);
 hyperdeck.slotInfo(); //Gives info on currently selected slot
 hyperdeck.slotInfo(1);
 hyperdeck.clipsGet();
+hyperdeck.nextClip();
+hyperdeck.prevClip();
 hyperdeck.transportInfo();
 hyperdeck.format(format);
 ```

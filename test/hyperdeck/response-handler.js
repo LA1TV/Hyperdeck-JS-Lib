@@ -140,8 +140,8 @@ describe('ResponseHandler', function() {
         });
       });
     });
-    COMBINED_RESPONSE.split('').forEach(function(char) {
-      socket.write(char);
+    COMBINED_RESPONSE.split('').forEach(function(letter) {
+      socket.write(letter);
     });
   });
 });

@@ -38,6 +38,18 @@ var Hyperdeck = function(config) {
     return this.makeRequest('goto: timecode: ' + timecode);
   };
 
+  this.jogTo = function(timecode) {
+    return this.makeRequest('jog: timecode: ' + timecode);
+  };
+
+  this.jogForward = function(timecode) {
+    return this.makeRequest('jog: timecode: +' + timecode);
+  };
+
+  this.jogBackwards = function(timecode) {
+    return this.makeRequest('jog: timecode: -' + timecode);
+  };
+
   this.slotInfo = function (id) {
     if (typeof id === 'number') {
       return this.makeRequest('slot info: slot id: ' + id);

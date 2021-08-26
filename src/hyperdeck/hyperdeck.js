@@ -30,8 +30,12 @@ var Hyperdeck = function(config) {
     return this.makeRequest('stop');
   };
 
-  this.record = function() {
-    return this.makeRequest('record');
+  this.record = function(clipname) {
+    if (typeof clipname === 'string') {
+      return this.makeRequest('record: ' + clipname);
+    } else {
+      return this.makeRequest('record');
+    }
   };
 
   this.goTo = function(timecode) {

@@ -32,7 +32,7 @@ var Hyperdeck = function(config) {
 
   this.record = function(clipname) {
     if (typeof clipname === 'string') {
-      return this.makeRequest('record: ' + clipname);
+      return this.makeRequest('record: name: ' + clipname);
     } else {
       return this.makeRequest('record');
     }
